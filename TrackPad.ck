@@ -164,11 +164,7 @@ public class TrackPad
                 else
                     0 => m_distanceBetweenTwoTouches;
                 
-                // calc area of the convex polygon containing three or more touches
-                if (m_nTouches > 3)
-                    __grahamScan();
-                
-                
+
                 // handle all events
                 
                 _handleDistanceBetweenTwoTouches();
@@ -189,26 +185,6 @@ public class TrackPad
         ] @=> int trackPadToMouseDeviceIndexMapping[][];
 
         return trackPadToMouseDeviceIndexMapping[n_trackPads - 1][m_nTrackPad]; 
-    }
-
-    /** 
-     *  Graham scan implementation calculates the area of the convex hull containing three or more touches
-     *  see http://en.wikipedia.org/wiki/Graham_scan
-     */ 
-    fun float __grahamScan()
-    {
-        // TODO
-    }
-    
-    /** 
-     *  Graham scan helper method
-     *  Three points are a counter-clockwise turn if ccw > 0, clockwise if
-     *  ccw < 0, and collinear if ccw = 0 because ccw is a determinant that
-     *  gives the signed area of the triangle formed by p1, p2 and p3.
-     */
-    fun float __ccw(HidMsg p1, HidMsg p2, HidMsg p3)
-    {
-        return (p2.touchX - p1.touchX) * (p3.touchY - p1.touchY) - (p2.touchY - p1.touchY) * (p3.touchX - p1.touchX);
     }
 }
 

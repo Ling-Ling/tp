@@ -14,6 +14,8 @@
 
     "OscParamSend.ck",
     "OscBeatSend.ck",
+    "OscFreqSend",
+
 
     // static sample-playing utility class
     "XD.ck",
@@ -24,6 +26,9 @@
 
     // drum trackpad instrument
     "DrumPad.ck",
+    
+    //pincher trackpad instrument
+    "PincherPad.ck",
 
     // main script
     "main.ck"

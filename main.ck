@@ -50,11 +50,26 @@ oscRecv.listenForInt("freq2");
 //  discrete samples
 //
 
-Sample s[6];
+for (0 => int i; i < mice.size(); i++)
+{
+    string files[];
 
-"data/kick.wav" => s[0].m_file;
-spork ~ s[0].m_params.bindIntShred("hit", mice[1].m_params, "mouse_click");
-spork ~ s[0].m_params.bindIntShred("beatNum", oscRecv.m_params, "beatNum");
+    Sample sample;
+
+    if (i == 0)
+        ["data/clap.wav", "data/cowbell.wav", "data/cymbal.wav"] @=> files;
+    else if (i == 1)
+        ["data/lowtom.wav", "data/lowtomac.wav", "data/hightom.wav"] @=> files;
+    else if (i == 2)
+        ["data/snare.wav", "data/snare2.wav", "data/snareac.wav", "data/snare-chili.wav", "data/snare-hop.wav", "data/snare3.wav"] @=> files;
+    else if (i == 3)
+        ["data/kick.wav", "data/kick2.wav", "data/kickac.wav", "data/subbass.wav"] @=> files;
+
+    files @=> sample.m_files;
+
+    spork ~ sample.m_params.bindIntShred("hit", mice[i].m_params, "mouse_click");
+    spork ~ sample.m_params.bindIntShred("beatNum", oscRecv.m_params, "beatNum");
+}
 
 
 //

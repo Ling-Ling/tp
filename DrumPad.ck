@@ -48,14 +48,17 @@ public class DrumPad
     m_params.setFloat("freq", 0.);
     m_params.setFloat("openness", 0.);
 
+
+    Event m_hitEvent;
+
     spork ~ _hitLoop();
     fun void _hitLoop()
     {
-        m_params.getNewIntEvent("hit") @=> Event event;
+        //m_params.getNewIntEvent("hit") @=> Event event;
 
         while (1)
         {
-            event => now;
+            m_hitEvent => now;
 
             m_hitSamples[m_params.getInt("sample_set")] @=> string hitSample;
 

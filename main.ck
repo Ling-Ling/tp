@@ -48,6 +48,7 @@ OscParamRecv oscRecv;
 oscRecv.initPort(OSC_PORT);
 
 // receive beat
+oscRecv.listenForFloat("gain");
 oscRecv.listenForInt("beatNum");
 oscRecv.m_params.setIntRange("beatNum", 0, BAR_LENGTH);
 
@@ -79,6 +80,8 @@ for (0 => int i; i < mice.size(); i++)
 
     spork ~ sample.m_params.bindIntShred("hit", mice[i].m_params, "mouse_click");
     spork ~ sample.m_params.bindIntShred("beatNum", oscRecv.m_params, "beatNum");
+
+    spork ~ sample.m_params.bindFloatShred("gain", oscRecv.m_params, "gain");
 }
 
 
@@ -118,6 +121,8 @@ for (0 => int i; i < tps.size(); i++)
 
     dp.m_params.setIntRange("pattern", 0, dp.m_patterns.size());
     spork ~ dp.m_params.bindIntToFloatShred("pattern", tps[i].m_params, "x");
+
+    spork ~ dp.m_params.bindFloatShred("gain", oscRecv.m_params, "gain");
 }
 
 

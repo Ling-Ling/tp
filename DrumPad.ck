@@ -42,16 +42,17 @@ public class DrumPad
 
             m_params.getInt("beatNum") => int beatNum;
             m_params.getFloat("openness") => float openness;
+            m_params.getFloat("gain") => float gain;
 
             m_params.getInt("pattern") => int pattern;
 
             if (m_patterns.size() > 0 && m_files != NULL && m_patterns[pattern].size() >= beatNum && m_patterns[pattern][beatNum] == 1)
             {
-                XD.playSampleWithGain(m_files[Std.rand2(0, m_files.size() - 1)], 1. * (1. - openness));
+                XD.playSampleWithGain(m_files[Std.rand2(0, m_files.size() - 1)],  (1. - openness) * gain);
 
                 if (m_mixFiles != NULL)
                 {
-                    XD.playSampleWithGain(m_mixFiles[Std.rand2(0, m_mixFiles.size() - 1)], 1. * openness);
+                    XD.playSampleWithGain(m_mixFiles[Std.rand2(0, m_mixFiles.size() - 1)], openness * gain);
                     <<< m_mixFiles[Std.rand2(0, m_mixFiles.size() - 1)] >>>;
                 }
             }

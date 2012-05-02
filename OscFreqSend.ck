@@ -18,6 +18,11 @@ public class OscFreqSend extends OscParamSend
         spork ~ sendIntShred("freq2");
         spork ~ sendIntShred("freq3");
         spork ~ sendIntShred("freq4");
+        spork ~ sendIntShred("freq5");
+        spork ~ sendIntShred("freq6");
+        spork ~ sendIntShred("freq7");
+        spork ~ sendIntShred("freq8");
+
 
 
         [4, 3, 5] @=> int major[];
@@ -105,6 +110,11 @@ public class OscFreqSend extends OscParamSend
             m_params.setInt("freq2", frequency[1]);
             m_params.setInt("freq3", frequency[2]);
             m_params.setInt("freq4", frequency[3]);
+            m_params.setInt("freq4", frequency[4]);
+            m_params.setInt("freq4", frequency[5]);
+            m_params.setInt("freq4", frequency[6]);
+            m_params.setInt("freq4", frequency[7]);
+
             // wait
             duration => now;
             posInProgression++;

@@ -33,7 +33,7 @@
     "PincherPad.ck",
 
     // main script
-    "main_pinch.ck"
+    "main_pinch_lows.ck"
 
 ] @=> string depencies[];
 

@@ -99,9 +99,9 @@ public class OscFreqSend extends OscParamSend
             0 => base;
 
             m_params.setInt("freq1", frequency[0]);
-            m_params.setInt("freq1", frequency[0]);
-            m_params.setInt("freq1", frequency[0]);
-            m_params.setInt("freq1", frequency[0]);
+            m_params.setInt("freq2", frequency[1]);
+            m_params.setInt("freq3", frequency[2]);
+            m_params.setInt("freq4", frequency[3]);
             // wait
             duration => now;
         }

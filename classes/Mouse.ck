@@ -4,15 +4,22 @@ public class Mouse
 {
     Parameters m_params;
 
-    fun static void initMice(Mouse mice[])
+    fun static Mouse[] initMice(int n)
     {
-        for (0 => int i; i < mice.size(); i++)
+        Mouse @ mice[n];
+
+        for (0 => int i; i < n; i++)
         {
             if (mice[i] == NULL)
                 Mouse mouse @=> mice[i];
 
-            mice[i].initMouse(i);
+            if (mice[i].initMouse(i) != NULL)
+                <<< "[tp]", "initialized mouse", i >>>;
+            else 
+                <<< "[tp]", "could not open mouse", i >>>;
         }
+
+        return mice;
     }
 
     static int n_mice;

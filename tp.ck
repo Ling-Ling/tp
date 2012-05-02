@@ -6,45 +6,53 @@
 //
 
 
+/**  Depencies. Inclue all public classes used across main scripts */
 [
+    "IntEvent.ck",
+    "FloatEvent.ck",
     "Parameters.ck",
 
-    // osc
-    "OscParamRecv.ck",
+    // 
+    //  osc
 
+    "OscParamRecv.ck",
     "OscParamSend.ck",
     "OscBeatSend.ck",
     "OscFreqSend",
 
+    //
+    //  interfaces
 
-    // static sample-playing utility class
-    "XD.ck",
-
-    // generic trackpad superclass
     "Mouse.ck",
     "TrackPad.ck",
+    // TODO: "Keyboard.ck",
 
+    //
+    //  instruments
+
+    "Wub.ck",
+
+    // static sample-playing utility class & instrument
+    "XD.ck",
     "Sample.ck",
 
-    // drum trackpad instrument
+    // drum beat
     "DrumPad.ck",
     
-    //pincher trackpad instrument
-    "PincherPad.ck",
+    // pincher trackpad instrument
+    "PincherPad.ck"
+] 
+@=> string depencies[];
 
-    // main script
-    "main.ck"
+/**  Depency directory */
+"classes/" @=> string depency_dir;
 
-] @=> string depencies[];
-
-
+// spork each depency
 for (0 => int i; i < depencies.size(); i++)
-{
-    if (!Machine.add(depencies[i]))
+    if (!Machine.add(depency_dir + depencies[i]))
     {
         <<< "[x_x] error loading depency", depencies[i] >>>;
-        break;
+        Machine.crash(); 
     }
-}
 
 <<< "[^_^]", "loaded all depencies" >>>;

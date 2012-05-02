@@ -16,7 +16,7 @@ public class Parameters
     //
 
     float m_fValues[0];
-    Event fEvents[0][0] @=> Event @ m_fEvents[][];
+    FloatEvent fEvents[0][0] @=> FloatEvent @ m_fEvents[][];
     float m_fMins[0];
     float m_fMaxs[0];
 
@@ -24,9 +24,12 @@ public class Parameters
     {
         f => m_fValues[key];
 
-        getFloatEvents(key) @=> Event events[];
+        getFloatEvents(key) @=> FloatEvent events[];
         for (0 => int i; i < events.size(); i++)
+        {
+            f => events[i].f;
             events[i].signal();
+        }
     }
 
     fun void setNormalFloat(string key, float f)
@@ -77,19 +80,19 @@ public class Parameters
         return (getFloat(key) - min) * max + min;
     }
 
-    fun Event[] getFloatEvents(string key)
+    fun FloatEvent[] getFloatEvents(string key)
     {
         if (m_fEvents[key] == NULL)
-            Event events[0] @=> m_fEvents[key];
+            FloatEvent events[0] @=> m_fEvents[key];
 
         return m_fEvents[key];
     }
 
-    fun void _addFloatEvent(string key, Event event)
+    fun void _addFloatEvent(string key, FloatEvent event)
     {
-        getFloatEvents(key) @=> Event events[];
+        getFloatEvents(key) @=> FloatEvent events[];
 
-        Event @ newEvents[events.size() + 1];
+        FloatEvent @ newEvents[events.size() + 1];
 
         for (0 => int i; i < events.size(); i++)
             events[i] @=> newEvents[i];
@@ -99,9 +102,9 @@ public class Parameters
         newEvents @=> m_fEvents[key];
     }
 
-    fun Event getNewFloatEvent(string key)
+    fun FloatEvent getNewFloatEvent(string key)
     {
-        Event event;
+        FloatEvent event;
 
         _addFloatEvent(key, event);
 
@@ -110,18 +113,18 @@ public class Parameters
 
     fun void logFloatShred(string key)
     {
-        getNewFloatEvent(key) @=> Event event;
+        getNewFloatEvent(key) @=> FloatEvent event;
 
         while (1)
         {
             event => now;
-            <<< key + ":", getFloat(key) >>>;
+            <<< key + ":", event.f >>>;
         }
     }
 
     fun void bindFloatShred(string key, Parameters params, string otherKey)
     {
-        params.getNewFloatEvent(otherKey) @=> Event event;
+        params.getNewFloatEvent(otherKey) @=> FloatEvent event;
 
         while (1)
         {
@@ -135,7 +138,7 @@ public class Parameters
 
     fun void bindFloatToIntShred(string key, Parameters params, string otherKey)
     {
-        params.getNewIntEvent(otherKey) @=> Event event;
+        params.getNewIntEvent(otherKey) @=> IntEvent event;
 
         while (1)
         {
@@ -150,7 +153,7 @@ public class Parameters
                 params.getInt(otherKey) $ float => f;
 
             else 
-                ((params.getInt(otherKey) - min) $ float) / max => f;
+                ((event.i - min) $ float) / max => f;
 
             setNormalFloat(key, f);
         }
@@ -162,7 +165,7 @@ public class Parameters
     //
 
     int m_iValues[0];
-    Event iEvents[0][0] @=> Event @ m_iEvents[][];
+    IntEvent iEvents[100][100] @=> IntEvent @ m_iEvents[][];
     int m_iMins[0];
     int m_iMaxs[0];
 
@@ -171,9 +174,12 @@ public class Parameters
         i => m_iValues[key];
 
         // signal all events
-        getIntEvents(key) @=> Event events[];
-        for (0 => int i; i < events.size(); i++)
+        getIntEvents(key) @=> IntEvent events[];
+        for (0 => int j; j < events.size(); j++)
+        {
+            i => events[i].i;
             events[i].signal();
+        }
     }
 
     fun int getInt(string key)
@@ -199,19 +205,27 @@ public class Parameters
             setInt(key, max);
     }
 
-    fun Event[] getIntEvents(string key)
+    fun IntEvent[] getIntEvents(string key)
     {
         if (m_iEvents[key] == NULL)
-            Event events[0] @=> m_iEvents[key];
+            IntEvent events[0] @=> m_iEvents[key];
 
         return m_iEvents[key];
     }
     
-    fun void _addIntEvent(string key, Event event)
+    fun void _addIntEvent(string key, IntEvent event)
     {
-        getIntEvents(key) @=> Event events[];
+        if (m_iEvents[key] == NULL)
+        {
+            [event] @=> m_iEvents[key];
+            return;
+        } 
 
-        Event @ newEvents[events.size() + 1];
+        getIntEvents(key) @=> IntEvent events[];
+
+        <<< key, events.size() >>>; 
+
+        IntEvent @ newEvents[events.size() + 1];
 
         for (0 => int i; i < events.size(); i++)
             events[i] @=> newEvents[i];
@@ -221,9 +235,9 @@ public class Parameters
         newEvents @=> m_iEvents[key];
     }
 
-    fun Event getNewIntEvent(string key)
+    fun IntEvent getNewIntEvent(string key)
     {
-        Event event;
+        IntEvent event;
 
         _addIntEvent(key, event);
 
@@ -232,30 +246,30 @@ public class Parameters
     
     fun void logIntShred(string key)
     {
-        getNewIntEvent(key) @=> Event event;
+        getNewIntEvent(key) @=> IntEvent event;
 
         while (1)
         {
             event => now;
-            <<< key + ":", getInt(key) >>>;
+            <<< key + ":", event.i >>>;
         }
     }
 
     fun void bindIntShred(string key, Parameters params, string otherKey)
     {
-        params.getNewIntEvent(otherKey) @=> Event event;
+        params.getNewIntEvent(otherKey) @=> IntEvent event;
 
         while (1)
         {
             event => now;
 
-            params.getInt(otherKey) => int i;
+            event.i => int i;
 
             if (params.m_iMins[otherKey] != params.m_iMaxs[otherKey] 
                 &&
                 m_iMins[key] != m_iMaxs[key])
             {
-                ((((i - params.m_iMins[otherKey]) $ float) / params.m_iMaxs[otherKey]) * m_iMaxs[key]) $ int + m_iMins[key] => i;
+                ((((event.i - params.m_iMins[otherKey]) $ float) / params.m_iMaxs[otherKey]) * m_iMaxs[key]) $ int + m_iMins[key] => i;
             }
 
             setInt(key, i);
@@ -264,7 +278,7 @@ public class Parameters
 
     fun void bindIntToFloatShred(string key, Parameters params, string otherKey)
     {
-        params.getNewFloatEvent(otherKey) @=> Event event;
+        params.getNewFloatEvent(otherKey) @=> FloatEvent event;
 
         while (1)
         {
@@ -277,7 +291,7 @@ public class Parameters
             }
             else
             {
-                setInt(key, params.getFloat(otherKey) $ int);
+                setInt(key, event.f $ int);
             }
         }
     }

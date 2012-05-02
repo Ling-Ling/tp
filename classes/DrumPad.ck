@@ -51,10 +51,7 @@ public class DrumPad
                 XD.playSampleWithGain(m_files[Std.rand2(0, m_files.size() - 1)],  (1. - openness) * gain);
 
                 if (m_mixFiles != NULL)
-                {
                     XD.playSampleWithGain(m_mixFiles[Std.rand2(0, m_mixFiles.size() - 1)], openness * gain);
-                    <<< m_mixFiles[Std.rand2(0, m_mixFiles.size() - 1)] >>>;
-                }
             }
         }
     }

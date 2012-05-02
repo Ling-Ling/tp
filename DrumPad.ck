@@ -8,28 +8,8 @@
 
 public class DrumPad 
 {
-    //
-    //  Sample banks
-    // 
-
-    [
-        "data/kick.wav",
-        "data/snare.wav"
-    ] 
-    @=> string m_hitSamples[];
-
-    [
-        "data/hihat.wav",
-        "data/snare.wav"
-    ] 
-    @=> string m_beatSamples[];
-
-    [
-        "data/hihat-open.wav", 
-        ""
-    ] 
-    @=> string m_mixBeatSamples[];
-
+    string m_file;
+    string m_mixFile;
 
     //
     //  Parameters
@@ -48,22 +28,6 @@ public class DrumPad
     m_params.setFloat("freq", 0.);
     m_params.setFloat("openness", 0.);
 
-
-    m_params.getNewIntEvent("hit") @=> Event m_hitEvent;
-
-    spork ~ _hitLoop();
-    fun void _hitLoop()
-    {
-        while (1)
-        {
-            m_hitEvent => now;
-
-            if (m_params.getInt("hit"))
-                m_params.setInt("n_hits", m_params.getInt("n_hits") + 1);
-        }
-    }
-
-
     m_params.getNewIntEvent("beatNum") @=> Event m_beatEvent;
 
     spork ~ _beatLoop();
@@ -76,20 +40,11 @@ public class DrumPad
             m_params.getInt("beatNum") => int beatNum;
             m_params.getFloat("openness") => float openness;
 
-            m_beatSamples[m_params.getInt("sample_set")] @=> string beatSample;
-            m_mixBeatSamples[m_params.getInt("sample_set")] @=> string mixBeatSample;
+            if (m_file != "")
+                XD.playSampleWithGain(m_file, 1. * (1. - openness));
 
-            XD.playSampleWithGain(beatSample, 1. * (1. - openness));
-
-            if (mixBeatSample != "")
-                XD.playSampleWithGain(mixBeatSample, 1. * openness);
-
-            if (m_params.getInt("n_hits") > 0)
-            {
-                m_hitSamples[m_params.getInt("sample_set")] @=> string hitSample;
-                XD.playSampleWithGain(hitSample, 1.);
-                m_params.setInt("n_hits", m_params.getInt("n_hits") - 1);
-            }
+            if (m_mixFile != "")
+                XD.playSampleWithGain(m_mixFile, 1. * openness);
         }
     }
 }

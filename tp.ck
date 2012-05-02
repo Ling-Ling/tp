@@ -24,6 +24,8 @@
     "Mouse.ck",
     "TrackPad.ck",
 
+    "Sample.ck",
+
     // drum trackpad instrument
     "DrumPad.ck",
     

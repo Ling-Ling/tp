@@ -59,29 +59,6 @@ public class TrackPad
     int m_nTouches;
     
 
-    //
-    //  virtual methods:
-    //
-
-    fun void playNoteAtBeatWithGain(int note, int beat, float gain)
-    {
-        //<<< note, beat, gain >>>;
-    }
-
-    fun void _handleTouch(HidMsg msg) 
-    {
-        if (m_nTouches == 5 && msg == m_msgs[4])
-            <<< "[tp] trackpad", m_nTrackPad >>>;
-        /*
-        <<< "(", msg.touchX, msg.touchY, ")", msg.touchSize >>>;
-        */
-    }
-
-
-    //
-    //  public methods:
-    //
-
     /**  
      *  Main touch loop initializer
      *
@@ -115,7 +92,6 @@ public class TrackPad
 
                 for (1 => n; n < MAX_NUM_TOUCHES; n++)
                 {
-
                     m_params.setFloat("x", m_msgs[n - 1].touchX); 
                     m_params.setFloat("y", m_msgs[n - 1].touchY); 
                     m_params.setFloat("size", m_msgs[n - 1].touchSize); 

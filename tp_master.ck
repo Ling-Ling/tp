@@ -15,6 +15,7 @@
     "OscParamSend.ck",
     "OscBeatSend.ck",
     "OscFreqSend",
+    "OscGainSend",
 
 
     // static sample-playing utility class

@@ -17,8 +17,9 @@ public class OscParamSend extends OscSend
 
     fun OscParamSend initPort(int port)
     {
-       port => m_port; 
-       return this;
+        port => m_port; 
+        this.setHost(MULTIPLEX_IP_ADDRESS, m_port);
+        return this;
     }
    
     fun void sendIntShred(string key)

@@ -8,36 +8,14 @@
 
 8000 => int OSC_PORT;
 
-16 => int BAR_LENGTH;
+32 => int BAR_LENGTH;
 
 
 TrackPad @ tps[TrackPad.MAX_NUM_TRACKPADS];
 TrackPad.initTrackPads(tps);
 
-Mouse @ mice[tps.size()];
-Mouse.initMice(mice);
+Mouse.initMice(tps.size()) @=> Mouse mice[];
 
-
-//
-//  OSC master
-//
-
-OscBeatSend oscBeatSend;
-oscBeatSend.initPort(OSC_PORT);
-// send beat 
-spork ~ oscBeatSend.beatLoopShred();
-
-oscBeatSend.m_params.setInt("beatNum", 0);
-oscBeatSend.m_params.setInt("barLength", BAR_LENGTH);
-oscBeatSend.m_params.setInt("ticksPerBeat", 8);
-oscBeatSend.m_params.setInt("bpm", 140);
-oscBeatSend.m_params.setFloat("swing", 0);
-
-
-OscFreqSend oscFreqSend;
-oscFreqSend.initPort(OSC_PORT);
-// send freq
-spork ~ oscFreqSend.freqLoopShred();
 
 
 //
@@ -70,13 +48,18 @@ for (0 => int i; i < mice.size(); i++)
     if (i == 0)
         ["data/clap.wav", "data/cowbell.wav", "data/cymbal.wav"] @=> files;
     else if (i == 1)
-        ["data/lowtom.wav", "data/lowtomac.wav", "data/hightom.wav"] @=> files;
+        ["data/lowtom.wav", "data/lowtomac.wav"] @=> files;
     else if (i == 2)
         ["data/snare.wav", "data/snare2.wav", "data/snareac.wav", "data/snare-chili.wav", "data/snare-hop.wav", "data/snare3.wav"] @=> files;
     else if (i == 3)
         ["data/kick.wav", "data/kick2.wav", "data/kickac.wav", "data/subbass.wav"] @=> files;
+    else if (i == 4)
+        ["data/hightom.wav"] @=> files;
 
     files @=> sample.m_files;
+
+    
+    spork ~ mice[i].m_params.logIntShred("mouse_click");
 
     spork ~ sample.m_params.bindIntShred("hit", mice[i].m_params, "mouse_click");
     spork ~ sample.m_params.bindIntShred("beatNum", oscRecv.m_params, "beatNum");
@@ -95,10 +78,24 @@ for (0 => int i; i < tps.size(); i++)
 
     if (i == 0)
     {
-        [
-         [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
-         [1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1],
-         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        [ // pattern 0
+         [1, 0, 0, 0, 1, 0, 0, 0, 
+          1, 0, 0, 0, 1, 0, 0, 0, 
+          1, 0, 0, 0, 1, 0, 0, 0, 
+          1, 0, 0, 0, 1, 0, 0, 0],
+
+          // pattern 1
+         [1, 0, 0, 0, 1, 0, 1, 0, 
+          1, 0, 0, 0, 1, 0, 1, 1, 
+          1, 0, 0, 0, 1, 0, 1, 0, 
+          1, 0, 0, 0, 1, 0, 1, 1],
+
+          // pattern 2
+         [1, 1, 1, 1, 1, 1, 1, 1,
+          1, 1, 1, 1, 1, 1, 1, 1,
+          1, 1, 1, 1, 1, 1, 1, 1,
+          1, 1, 1, 1, 1, 1, 1, 1]
+
         ] @=> dp.m_patterns;
 
         ["data/closehat.wav"] @=> dp.m_files;
@@ -106,8 +103,18 @@ for (0 => int i; i < tps.size(); i++)
     }
     else if (i == 1)
     {
-        [
-         [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]
+        [ // pattern 0
+         [0, 0, 0, 0, 0, 0, 0, 0,
+          1, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0,
+          1, 0, 0, 0, 0, 0, 0, 0],
+
+          // pattern 1
+         [0, 0, 0, 0, 0, 0, 0, 0,
+          1, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0,
+          1, 0, 0, 0, 0, 0, 0, 0]
+
         ] @=> dp.m_patterns;
 
         ["data/snare.wav", "data/snareac.wav"] @=> dp.m_files;

@@ -16,5 +16,31 @@ unzip tp.zip
 #Launch
 
 ```
-chuck tp.ck
+chuck --loop tp &
+chuck + wub
+```
+
+OR  
+
+```
+chmod 755 l
+```
+
+THEN  
+
+```
+./l wub
+```
+
+
+#Terminate
+
+```
+chuck --kill
+```
+
+OR  
+
+```
+killall chuck
 ```

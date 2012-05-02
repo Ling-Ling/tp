@@ -77,7 +77,7 @@ for (0 => int i; i < mice.size(); i++)
 //
 
 DrumPad dp;
-"data/hihat.wav" => dp.m_file;
+["data/closehat.wav"] @=> dp.m_files;
 "data/hihat-open.wav" => dp.m_mixFile;
 
 spork ~ dp.m_params.bindIntShred("beatNum", oscRecv.m_params, "beatNum");

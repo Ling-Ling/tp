@@ -8,7 +8,7 @@
 
 public class DrumPad 
 {
-    string m_file;
+    string m_files[];
     string m_mixFile;
 
     //
@@ -16,6 +16,9 @@ public class DrumPad
     // 
 
     Parameters m_params;
+
+    [[1, 0, 0, 0, 1, 0, 0, 0]] @=> int m_patterns[][];
+
 
     // ints
     m_params.setInt("beatNum", 0);
@@ -40,8 +43,8 @@ public class DrumPad
             m_params.getInt("beatNum") => int beatNum;
             m_params.getFloat("openness") => float openness;
 
-            if (m_file != "")
-                XD.playSampleWithGain(m_file, 1. * (1. - openness));
+            if (m_files != NULL && m_patterns[0][beatNum] == 1)
+                XD.playSampleWithGain(m_files[Std.rand2(0, m_files.size() - 1)], 1. * (1. - openness));
 
             if (m_mixFile != "")
                 XD.playSampleWithGain(m_mixFile, 1. * openness);

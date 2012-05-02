@@ -14,8 +14,7 @@
 TrackPad @ tps[TrackPad.MAX_NUM_TRACKPADS];
 TrackPad.initTrackPads(tps);
 
-Mouse @ mice[tps.size()];
-Mouse.initMice(mice);
+Mouse.initMice(tps.size()) @=> Mouse mice[];
 
 
 

@@ -13,9 +13,19 @@ public class Wub
     //
 
     // TODO? subclass UGen
-    SawOsc m_sawOsc => ResonZ m_res => Envelope m_env => NRev m_rev => dac;
-    m_env => Delay m_delay => m_rev;
-    m_delay => Gain m_feedback => m_delay;
+
+    SawOsc m_sawOsc;
+    ResonZ m_res;
+    Envelope m_env;
+    NRev m_rev;
+
+    m_sawOsc => m_res => m_env => m_rev => dac;
+
+    Delay m_delay;
+    m_env => m_delay => m_rev;
+
+    Gain m_feedback;
+    m_delay => m_feedback => m_delay;
 
 
     //
@@ -28,7 +38,6 @@ public class Wub
     m_params.setInt("play", 0);
     m_params.setIntRange("play", 0, 1);
 
-            /*
     spork ~ _playLoop();
     fun void _playLoop()
     {
@@ -37,65 +46,54 @@ public class Wub
         {
             e => now;
             
-            m_params.getFloat("gain") => m_sawOsc.gain;
-            m_params.getFloat("feedbackGain") => m_feedback.gain;
-            m_params.getFloat("reverbMix") => m_rev.mix;
-
-            m_params.getInt("envDur")::ms => m_env.duration;
-            m_params.getInt("delayDur")::ms => m_delay.delay;
-
-            Std.mtof(e.i) => float freq;
+            Std.mtof(m_params.getFloat("midiNote")) => float freq;
             freq => m_sawOsc.freq;
 
             freq * m_params.getFloat("resFreq") => m_res.freq;
             m_params.getFloat("resQ") => m_res.Q;
 
-            <<< e.i >>>;
+            m_params.getInt("envDur")::ms => m_env.duration;
 
-            if (e.i)
+            m_params.getFloat("reverbMix") => m_rev.mix;
+
+            m_params.getInt("delayDur")::ms => m_delay.delay;
+
+            m_params.getFloat("feedbackGain") => m_feedback.gain;
+
+            m_params.getFloat("gain") => m_sawOsc.gain;
+
+            if (e.i == 1)
+            {
                 m_env.keyOn();
-            else
+                m_params.getInt("dur")::ms => now;
                 m_env.keyOff();
+            }
+            else
+            {
+                m_env.keyOff();
+            }
         }
     }
-*/
+
+    // note duration
+    m_params.setInt("dur", 200);
+    m_params.setIntRange("dur", 100, 500);
 
     // MIDI note
-    m_params.setFloat("midiNote", 25);
+    m_params.setFloat("midiNote", 30);
     m_params.setFloatRange("midiNote", 0, 50);
 
-    spork ~ _midiNoteLoop();
-    fun void _midiNoteLoop()
-    {
-        m_params.getNewIntEvent("midiNote") @=> IntEvent e;
-        while (1)
-        {
-            Std.mtof(e.i) => float freq;
-            freq => m_sawOsc.freq;
-
-            e => now;
-        }
-    }
-
     // gain
-    m_params.setFloat("gain", .001);
-    m_params.setFloatRange("gain", 0, .05);
-/*
-    spork ~ _gainLoop();
-    fun void _gainLoop()
-    {
-        m_params.getNewFloatEvent("gain") @=> FloatEvent f;
-        while (1)
-        {*/
-            
+    m_params.setFloat("gain", .1);
+    m_params.setFloatRange("gain", 0, .5);
     
     // feedback gain
-    m_params.setFloat("feedbackGain", 0);
+    m_params.setFloat("feedbackGain", .5);
     m_params.setFloatRange("feedbackGain", 0., .8);
 
     // reverb mix
-    m_params.setFloat("reverbMix", .01);
-    m_params.setFloatRange("reverbMix", 0., .1);
+    m_params.setFloat("reverbMix", .05);
+    m_params.setFloatRange("reverbMix", 0., .2);
 
     // delay duration
     m_params.setInt("delayDur", 750);

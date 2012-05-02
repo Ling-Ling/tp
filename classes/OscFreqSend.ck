@@ -8,17 +8,14 @@
 
 public class OscFreqSend extends OscParamSend
 {
+    4::second => dur duration;
 
-4::second => dur duration;
     fun void freqLoopShred()
     {
-        this.setHost(MULTIPLEX_IP_ADDRESS, m_port);
-
         spork ~ sendIntShred("freq1");
         spork ~ sendIntShred("freq2");
         spork ~ sendIntShred("freq3");
         spork ~ sendIntShred("freq4");
-
 
         [4, 3, 5] @=> int major[];
         [3, 4, 5] @=> int minor[];
@@ -29,7 +26,7 @@ public class OscFreqSend extends OscParamSend
         [3, 3, 4, 2] @=> int hdim[];
         [3, 3, 3, 3] @=> int fdim[];
 
-        "c" => string noteChar;
+        string noteChar;
 
         ["major","minor","minor","major","major","major","minor","dim","major"] @=> string modeProgression[];
         ["c", "e", "a", "g", "c", "f", "d", "b", "c"] @=> string noteProgression[];

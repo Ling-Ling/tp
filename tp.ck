@@ -11,6 +11,7 @@
     "IntEvent.ck",
     "FloatEvent.ck",
     "Parameters.ck",
+    "ParamIntPattern.ck",
 
     // 
     //  osc

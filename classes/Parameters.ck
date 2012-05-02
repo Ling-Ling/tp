@@ -165,7 +165,8 @@ public class Parameters
     //
 
     int m_iValues[0];
-    IntEvent iEvents[100][100] @=> IntEvent @ m_iEvents[][];
+    IntEvent iEvents[0][0] @=> IntEvent @ m_iEvents[][];
+    //IntEvent @ m_iEvents[][];
     int m_iMins[0];
     int m_iMaxs[0];
 
@@ -173,12 +174,17 @@ public class Parameters
     {
         i => m_iValues[key];
 
+        if (m_iEvents[key] == NULL)
+            return;
+
+
         // signal all events
-        getIntEvents(key) @=> IntEvent events[];
+        m_iEvents[key] @=> IntEvent events[];
+
         for (0 => int j; j < events.size(); j++)
         {
-            i => events[i].i;
-            events[i].signal();
+            i => events[j].i;
+            events[j].signal();
         }
     }
 
@@ -204,24 +210,17 @@ public class Parameters
         else if (getInt(key) > max)
             setInt(key, max);
     }
-
-    fun IntEvent[] getIntEvents(string key)
-    {
-        if (m_iEvents[key] == NULL)
-            IntEvent events[0] @=> m_iEvents[key];
-
-        return m_iEvents[key];
-    }
     
     fun void _addIntEvent(string key, IntEvent event)
     {
-        if (m_iEvents[key] == NULL)
+        if (m_iEvents[key] == NULL || m_iEvents[key].size() == 0)
         {
+            //getIntEvents(key) @=> IntEvent events[];
             [event] @=> m_iEvents[key];
             return;
         } 
 
-        getIntEvents(key) @=> IntEvent events[];
+        m_iEvents[key] @=> IntEvent events[];
 
         <<< key, events.size() >>>; 
 
@@ -271,7 +270,6 @@ public class Parameters
             {
                 ((((event.i - params.m_iMins[otherKey]) $ float) / params.m_iMaxs[otherKey]) * m_iMaxs[key]) $ int + m_iMins[key] => i;
             }
-
             setInt(key, i);
         }
     }

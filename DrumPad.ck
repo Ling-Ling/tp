@@ -41,6 +41,7 @@ public class DrumPad
     m_params.setInt("beatNum", 0);
     m_params.setInt("hit", 0);
     m_params.setInt("sample_set", 0);
+    m_params.setInt("n_hits", 0);
 
     // floats
     m_params.setFloat("gain", 1.);
@@ -57,10 +58,8 @@ public class DrumPad
         {
             m_hitEvent => now;
 
-            m_hitSamples[m_params.getInt("sample_set")] @=> string hitSample;
-
             if (m_params.getInt("hit"))
-                XD.playSampleWithGain(hitSample, 1.);
+                m_params.setInt("n_hits", m_params.getInt("n_hits") + 1);
         }
     }
 
@@ -84,6 +83,13 @@ public class DrumPad
 
             if (mixBeatSample != "")
                 XD.playSampleWithGain(mixBeatSample, 1. * openness);
+
+            if (m_params.getInt("n_hits") > 0)
+            {
+                m_hitSamples[m_params.getInt("sample_set")] @=> string hitSample;
+                XD.playSampleWithGain(hitSample, 1.);
+                m_params.setInt("n_hits", m_params.getInt("n_hits") - 1);
+            }
         }
     }
 }

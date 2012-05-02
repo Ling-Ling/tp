@@ -29,5 +29,13 @@ oscFreqSend.initPort(OSC_PORT);
 // send freq
 spork ~ oscFreqSend.freqLoopShred();
 
+OscGainSend oscGainSend;
+oscGainSend.initPort(OSC_PORT);
+// send freq
+spork ~ oscGainSend.gainLoopShred();
+
+spork ~ oscGainSend.m_params.logFloatShred("gain");
+
+
 // 24h
 1::day => now;

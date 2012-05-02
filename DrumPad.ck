@@ -8,7 +8,6 @@
 
 public class DrumPad 
 {
-
     //
     //  Sample banks
     // 
@@ -49,7 +48,7 @@ public class DrumPad
     m_params.setFloat("openness", 0.);
 
 
-    Event m_hitEvent;
+    m_params.getNewIntEvent("hit") @=> Event m_hitEvent;
 
     spork ~ _hitLoop();
     fun void _hitLoop()
@@ -87,66 +86,4 @@ public class DrumPad
                 XD.playSampleWithGain(mixBeatSample, 1. * openness);
         }
     }
-
-
-    //
-    //  TrackPad
-    // 
-
-/*
-    fun void setTrackPad(TrackPad trackPad)
-    {
-//        spork ~ __mouseClickLoop(trackPad.m_params);
-    
-        //spork ~ m_params.bindFloatShred("gain", trackPad.m_params, "pinch_distance");
-    }
-
-    fun void __mouseClickLoop(Parameters tpParams)
-    {
-        while (1)
-        {
-            if (tpParams.getNextInt("mouse_click"))
-                XD.playSampleWithGain("data/kick.wav", m_params.getFloat("gain"));
-        }        
-    }
-
-
-    // 
-    //  OSC 
-    //
-
-
-    fun void setOscRecv(OscParamRecv oscRecv)
-    {
-        spork ~ __oscBeatLoop(oscRecv.m_params);
-    
-        //spork ~ oscRecv.m_params.logIntShred("beat");
-        //spork ~ oscRecv.m_params.logIntShred("note");
-        //spork ~ oscRecv.m_params.logFloatShred("gain");
-
-    }
-
-    fun void __oscBeatLoop(Parameters oscParams)
-    {
-        while (1)
-        {
-            oscParams.getNextInt("beatNum") => int beatNum;
-            <<< beatNum >>>;
-            m_params.getInt("sound") => int sound;
-
-            if (sound == 0 )
-            {
-                m_params.getFloat("openness") => float openness;
-                XD.playSampleWithGain("data/hihat.wav", 1. * (1. - openness));
-                XD.playSampleWithGain("data/hihat-open.wav", 1. * openness);
-            }
-            else if (sound == 1)
-            {
-                m_params.getFloat("openness") => float openness;
-                XD.playSampleWithGain("data/snare.wav", 1. * (1. - openness));
-            }
-        }
-    }
-    */
-    
 }

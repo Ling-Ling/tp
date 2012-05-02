@@ -5,7 +5,6 @@
 // Stanford Laptop Orchestra (SLOrk)
 //
 
-
 public class OscFreqSend extends OscParamSend
 {
 
@@ -22,8 +21,12 @@ public class OscFreqSend extends OscParamSend
         spork ~ sendIntShred("freq6");
         spork ~ sendIntShred("freq7");
         spork ~ sendIntShred("freq8");
-
-
+        spork ~ sendIntShred("freq9");
+        spork ~ sendIntShred("freq10");
+        
+        //-2 => int lowOctave;
+        //0 => int midOctave;
+        //1 => int highOctave;
 
         [4, 3, 5] @=> int major[];
         [3, 4, 5] @=> int minor[];
@@ -65,14 +68,22 @@ public class OscFreqSend extends OscParamSend
             if (noteChar == "a#") 58 => base;//frequency[channel][numWaves[channel]-1];
             if (noteChar == "b") 59 => base;//frequency[channel][numWaves[channel]-1];
         
-            if (base != 0){
-                0 => numWaves;
-                for (0 => int i; i < 8; i++)
+        if (base != 0){
+            0 => numWaves;
+                for (0 => int i; i < 10; i++)
                 {
+                    //int mbase;
+                    //if (i < 4)
+                    //    base + (lowOctave*12) => mbase;
+                    //else if (i < 8)
+                    //    base + (midOctave*12) => mbase;
+                    //else if (i < 10)
+                    //    base + (highOctave*12) => mbase;
+                    
                     if (mode == "major") {
                         base => frequency[numWaves];
                         base + major[i%3] => base;
-                        }
+                    }
                     if (mode == "minor") {
                         base => frequency[numWaves];
                         base + minor[i%3] => base;
@@ -102,7 +113,7 @@ public class OscFreqSend extends OscParamSend
                         base + fdim[i%3];
                     }
                     numWaves++;
-                } 
+                }
             }
             0 => base;
 
@@ -110,10 +121,12 @@ public class OscFreqSend extends OscParamSend
             m_params.setInt("freq2", frequency[1]);
             m_params.setInt("freq3", frequency[2]);
             m_params.setInt("freq4", frequency[3]);
-            m_params.setInt("freq4", frequency[4]);
-            m_params.setInt("freq4", frequency[5]);
-            m_params.setInt("freq4", frequency[6]);
-            m_params.setInt("freq4", frequency[7]);
+            m_params.setInt("freq5", frequency[4]);
+            m_params.setInt("freq6", frequency[5]);
+            m_params.setInt("freq7", frequency[6]);
+            m_params.setInt("freq8", frequency[7]);
+            m_params.setInt("freq9", frequency[8]);
+            m_params.setInt("freq10", frequency[9]);
 
             // wait
             duration => now;

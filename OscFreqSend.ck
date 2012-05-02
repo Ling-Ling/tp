@@ -37,7 +37,7 @@ public class OscFreqSend extends OscParamSend
         0 => int base;
         "major" => string mode;
 
-        float frequency[20];        
+        int frequency[20];        
 
         while (1){
 
@@ -62,35 +62,35 @@ public class OscFreqSend extends OscParamSend
                 for (0 => int i; i < 8; i++)
                 {
                     if (mode == "major") {
-                       Std.mtof(base) => frequency[numWaves];
+                        base => frequency[numWaves];
                         base + major[i%3] => base;
                         }
                     if (mode == "minor") {
-                        Std.mtof(base) => frequency[numWaves];
+                        base => frequency[numWaves];
                         base + minor[i%3] => base;
                     }
                     if (mode == "dim") {
-                        Std.mtof(base) => frequency[numWaves];
+                        base => frequency[numWaves];
                         base + dim[i%3] => base;
                     }
                    if (mode == "major7") {
-                        Std.mtof(base) => frequency[numWaves];
+                        base => frequency[numWaves];
                         base + major7[i%3] => base;
                     }
                     if (mode == "major77") {
-                        Std.mtof(base) => frequency[numWaves];
+                        base => frequency[numWaves];
                         base + dom[i%3] => base;
                     }
                     if (mode == "min7") {
-                        Std.mtof(base) => frequency[numWaves];
+                        base => frequency[numWaves];
                         base + minor7[i%3] => base;
                     }
                    if (mode == "dim7") {
-                        Std.mtof(base) => frequency[numWaves];
+                        base => frequency[numWaves];
                         base + hdim[i%3] => base;
                     }
                     if (mode == "dim77") {
-                        Std.mtof(base) => frequency[numWaves];
+                        base => frequency[numWaves];
                         base + fdim[i%3];
                     }
                     numWaves++;

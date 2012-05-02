@@ -54,8 +54,6 @@ public class DrumPad
     spork ~ _hitLoop();
     fun void _hitLoop()
     {
-        //m_params.getNewIntEvent("hit") @=> Event event;
-
         while (1)
         {
             m_hitEvent => now;
@@ -68,14 +66,14 @@ public class DrumPad
     }
 
 
+    m_params.getNewIntEvent("beatNum") @=> Event m_beatEvent;
+
     spork ~ _beatLoop();
     fun void _beatLoop()
     {
-        m_params.getNewIntEvent("beatNum") @=> Event event;
-
         while (1)
         {
-            event => now;
+            m_beatEvent => now;
 
             m_params.getInt("beatNum") => int beatNum;
             m_params.getFloat("openness") => float openness;

@@ -19,6 +19,7 @@
     "XD.ck",
 
     // generic trackpad superclass
+    "Mouse.ck",
     "TrackPad.ck",
 
     // drum trackpad instrument

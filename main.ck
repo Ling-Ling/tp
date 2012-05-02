@@ -13,6 +13,10 @@
 TrackPad @ tps[TrackPad.MAX_NUM_TRACKPADS];
 TrackPad.initTrackPads(tps);
 
+Mouse @ mice[TrackPad.MAX_NUM_TRACKPADS];
+Mouse.initMice(mice);
+
+
 
 // 
 //  osc 
@@ -63,8 +67,12 @@ DrumPad dp;
 
 spork ~ dp.m_params.bindIntShred("hit", tps[0].m_params, "mouse_click");
 
+
 dp.m_params.setIntRange("beatNum", 0, 8);
 spork ~ dp.m_params.bindIntShred("beatNum", oscRecv.m_params, "beatNum");
+
+//dp.m_params.getNewIntEvent("beatNum") @=> dp.m_beatEvent;
+
 
 spork ~ dp.m_params.logIntShred("beatNum");
 

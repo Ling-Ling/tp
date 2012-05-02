@@ -25,7 +25,7 @@ public class TrackPad
                 // generic TrackPad for debugging
                 TrackPad tp @=> tps[i];
 
-            tps[i].initTrackPad(i) @=> tps[i];
+            tps[i].initTrackPad(i);
             
             // failed init
             if (tps[i] == NULL)
@@ -33,15 +33,6 @@ public class TrackPad
         }
 
         <<< "[tp] initialized", TrackPad.n_trackPads, "trackpads" >>>;
-
-        // init mouse click handlers on all initialized trackpads
-        for (0 => int i; i < TrackPad.n_trackPads; i++)
-        {
-            if (tps[i].initMouse() == NULL)
-                <<< "[tp] error initializing mouse on trackpad ", i >>>;
-            else 
-                <<< "[tp] initialized mouse on trackpad", i >>>;
-        }
     }
 
 
@@ -49,8 +40,6 @@ public class TrackPad
     //  static variables:
     //
     
-    // this counter is currently essential to openning the correct mouse device for click events, due to the arbitrary mapping
-    // TODO: find a better workaround
     static int n_trackPads;
 
 
@@ -68,8 +57,6 @@ public class TrackPad
     
     float m_AreaBetweenThreeOrMoreTouches;
     int m_nTouches;
-    
-    Hid m_mouse;
     
 
     //
@@ -112,38 +99,6 @@ public class TrackPad
         spork ~ __trackPadTouchLoop();
 
         return this;
-    }
-
-    /**  
-     *  Mouse click loop initializer
-     */
-    fun TrackPad initMouse()
-    {
-        if (!m_mouse.openMouse(2))
-            return NULL;
-
-        spork ~ __mouseClickLoop();
-
-        return this;
-    }
-
-    /**  Main mouse click loop */
-    fun void __mouseClickLoop()
-    {
-        while (1)
-        {
-            HidMsg msg;
-            m_mouse => now;
-
-            while (m_mouse.recv(msg))
-            {
-                if (msg.isButtonDown())
-                    m_params.setInt("mouse_click", 1);
-
-                else if (msg.isButtonUp())
-                    m_params.setInt("mouse_click", 0);
-            }
-        }
     }
 
     /**  Main track pad touch loop */

@@ -17,6 +17,7 @@ public class PincherPad
 
     //units
     FMVoices s => dac;
+    0.0=>s.gain;
     Envelope e => blackhole;
     .5::second => e.duration;
 

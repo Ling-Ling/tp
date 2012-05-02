@@ -1,60 +1,63 @@
 //
 //  main.ck
 //
-//  Ilias Karim
-//  Stanford Laptop Orchestra (SLOrk)
+// Ilias Karim
+// Stanford Laptop Orchestra (SLOrk)
 //
 
 
-TrackPad tps[TrackPad.MAX_NUM_TRACKPADS];
+//
+//  trackpads 
+//
 
-// init as many trackpads as possible
-for (0 => int i; i < tps.size(); i++)
-{
-    if (i == 1)
-    {
-        // drumpad
-        DrumPad dp;
-        dp.initTrackPad(i) @=> tps[i];
-    }
-    else
-    {
-        // generic trackpad
-        tps[i].initTrackPad(i);
-    }
-    
-    // failed init
-    if (tps[i] == NULL)
-        break;
-}
-
-<<< "[tp] successfully initialized", TrackPad.n_trackPads, "trackpads" >>>;
+TrackPad @ tps[TrackPad.MAX_NUM_TRACKPADS];
+TrackPad.initTrackPads(tps);
 
 
-// init mouse click handlers on all initialized trackpads
-for (0 => int i; i < TrackPad.n_trackPads; i++)
-    if (tps[i].initMouse() == NULL)
-        <<< "[tp] error initializing mouse on trackpad ", i >>>;
-    else 
-        <<< "[tp] successfully initialized mouse on trackpad", i >>>;
+// 
+//  osc 
+//
+
+8000 => int OSC_PORT;
 
 
-/*
-// infinite loop
-while (1)
-    1::week => now;
-*/
+// master:
 
-0 => int beat;
-8 => int bar_length;
+OscBeatSend oscBeatSend;
+oscBeatSend.initPort(OSC_PORT);
 
-// play loop
-while (1)
-{
-    100::ms => now;
-
-    for (0 => int i; i < TrackPad.n_trackPads; i++)
-        tps[i].playNoteAtBeatWithGain(0, beat++ % bar_length, .5);
-}
+// send beat 
+spork ~ oscBeatSend.beatLoopShred();
 
 
+// slave:
+
+OscParamRecv oscRecv;
+oscRecv.initPort(OSC_PORT);
+
+// receive beat
+oscRecv.listenForInt("beatNum");
+//spork ~ oscRecv.m_params.logIntShred("beatNum");
+
+
+//
+//  drums
+//
+
+DrumPad dp;
+
+
+spork ~ dp.m_params.bindIntShred("hit", tps[0].m_params, "mouse_click");
+spork ~ dp.m_params.logIntShred("hit");
+
+
+spork ~ dp.m_params.bindIntShred("beatNum", oscRecv.m_params, "beatNum");
+spork ~ dp.m_params.logIntShred("beatNum");
+
+spork ~ dp.m_params.bindFloatShred("openness", tps[0].m_params, "y");
+spork ~ dp.m_params.logFloatShred("openness");
+
+
+
+// 24h
+1::day => now;

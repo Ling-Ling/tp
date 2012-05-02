@@ -29,5 +29,3 @@ public class XD
         buf.length() => now;        
     }
 }
-
-<<< "Loaded", "XD.ck" >>>;

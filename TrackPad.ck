@@ -1,5 +1,5 @@
 //
-//  TrackPad.ck
+//   TrackPad.ck
 //
 //  Ilias Karim
 //  Stanford Laptop Orchestra (SLOrk)
@@ -9,31 +9,63 @@
 public class TrackPad
 {
     //
-    // static constants:
+    //  static constants:
     //
 
     static int MAX_NUM_TRACKPADS;
     static int MAX_NUM_TOUCHES;
 
 
+    fun static void initTrackPads(TrackPad tps[])
+    {
+        // init as many trackpad touch handlers as possible
+        for (0 => int i; i < tps.size(); i++)
+        {
+            if (tps[i] == NULL)
+                // generic TrackPad for debugging
+                TrackPad tp @=> tps[i];
+
+            tps[i].initTrackPad(i) @=> tps[i];
+            
+            // failed init
+            if (tps[i] == NULL)
+                break;
+        }
+
+        <<< "[tp] initialized", TrackPad.n_trackPads, "trackpads" >>>;
+
+        // init mouse click handlers on all initialized trackpads
+        for (0 => int i; i < TrackPad.n_trackPads; i++)
+        {
+            if (tps[i].initMouse() == NULL)
+                <<< "[tp] error initializing mouse on trackpad ", i >>>;
+            else 
+                <<< "[tp] initialized mouse on trackpad", i >>>;
+        }
+    }
+
+
     //
-    // static variables:
+    //  static variables:
     //
     
-    // TrackPad counter is currently essential to openning the correct mouse device for click events. 
+    // this counter is currently essential to openning the correct mouse device for click events, due to the arbitrary mapping
     // TODO: find a better workaround
-    0 => static int n_trackPads;
+    static int n_trackPads;
 
 
     //
-    // instance variables:
+    //  instance variables:
     //
+
+    // events
+    Parameters m_params;
+
 
     int m_nTrackPad;
     Hid m_trackPad;
     HidMsg m_msgs[MAX_NUM_TOUCHES];
     
-    float m_distanceBetweenTwoTouches;
     float m_AreaBetweenThreeOrMoreTouches;
     int m_nTouches;
     
@@ -41,7 +73,7 @@ public class TrackPad
     
 
     //
-    // public/private virtual methods:
+    //  virtual methods:
     //
 
     fun void playNoteAtBeatWithGain(int note, int beat, float gain)
@@ -51,36 +83,16 @@ public class TrackPad
 
     fun void _handleTouch(HidMsg msg) 
     {
+        if (m_nTouches == 5 && msg == m_msgs[4])
+            <<< "[tp] trackpad", m_nTrackPad >>>;
         /*
         <<< "(", msg.touchX, msg.touchY, ")", msg.touchSize >>>;
         */
     }
 
-    fun void _handleDistanceBetweenTwoTouches()
-    {
-        /*
-        if (m_distanceBetweenTwoTouches > 0)
-            <<< "TrackPad", m_nTrackPad, m_distanceBetweenTwoTouches, "between two touches" >>>;
-        */
-    }
-
-    fun void _handleMouseClickDown()
-    {
-        /*
-        <<< "TrackPad", m_nTrackPad, "click down" >>>;
-        */
-    }
-
-    fun void _handleMouseClickUp()
-    {
-        /*
-        <<< "TrackPad", m_nTrackPad, "click up" >>>;
-        */
-    }
-
 
     //
-    // public methods:
+    //  public methods:
     //
 
     /**  
@@ -104,22 +116,16 @@ public class TrackPad
 
     /**  
      *  Mouse click loop initializer
-     *  ALL available TrackPads must be opened via initTrackPad before calling initMouse 
      */
     fun TrackPad initMouse()
     {
-        if (!m_mouse.openMouse(__mouseDeviceIndex()))
+        if (!m_mouse.openMouse(2))
             return NULL;
 
         spork ~ __mouseClickLoop();
 
         return this;
     }
-
-
-    //
-    // protected methods:
-    //
 
     /**  Main mouse click loop */
     fun void __mouseClickLoop()
@@ -132,10 +138,10 @@ public class TrackPad
             while (m_mouse.recv(msg))
             {
                 if (msg.isButtonDown())
-                    _handleMouseClickDown();
+                    m_params.setInt("mouse_click", 1);
 
                 else if (msg.isButtonUp())
-                    _handleMouseClickUp();
+                    m_params.setInt("mouse_click", 0);
             }
         }
     }
@@ -149,42 +155,35 @@ public class TrackPad
             
             if (m_trackPad.recv(m_msgs[0]))
             {
+                int n;
                 m_msgs[0].which => int lastTouchNum;
 
-                // calc number of active touches
-                for (1 => m_nTouches; m_nTouches < MAX_NUM_TOUCHES; m_nTouches++)
-                    if (!m_trackPad.recv(m_msgs[m_nTouches]) || m_msgs[m_nTouches].which == lastTouchNum)
+                for (1 => n; n < MAX_NUM_TOUCHES; n++)
+                {
+
+                    m_params.setFloat("x", m_msgs[n - 1].touchX); 
+                    m_params.setFloat("y", m_msgs[n - 1].touchY); 
+                    m_params.setFloat("size", m_msgs[n - 1].touchSize); 
+
+                    m_params.setFloat("touch" + (n - 1) + "x", m_msgs[n - 1].touchX); 
+                    m_params.setFloat("touch" + (n - 1) + "y", m_msgs[n - 1].touchY); 
+                    m_params.setFloat("touch" + (n - 1) + "size", m_msgs[n - 1].touchSize); 
+
+                    if (!m_trackPad.recv(m_msgs[n]) || m_msgs[n].which == lastTouchNum)
                         break;
                     else 
-                        m_msgs[m_nTouches].which => lastTouchNum;
-                
-                // calc dist between two touches
-                if (m_nTouches == 2)
-                    Math.sqrt(Math.pow(m_msgs[0].touchX - m_msgs[1].touchX, 2) + Math.pow(m_msgs[0].touchY - m_msgs[1].touchY, 2)) => m_distanceBetweenTwoTouches;
-                else
-                    0 => m_distanceBetweenTwoTouches;
-                
+                        m_msgs[n].which => lastTouchNum;
+                }
 
-                // handle all events
+                m_params.setInt("num_touches", n);
                 
-                _handleDistanceBetweenTwoTouches();
-                
-                for (0 => int i; i < m_nTouches; i++)
-                    _handleTouch(m_msgs[i]);
+                // pinch distance between first two touches
+                if (n == 2)
+                    m_params.setFloat("pinch_distance", Math.sqrt(Math.pow(m_msgs[0].touchX - m_msgs[1].touchX, 2) + Math.pow(m_msgs[0].touchY - m_msgs[1].touchY, 2)));
+                else
+                    m_params.setFloat("pinch_distance", 0.);
             }
         }
-    }
-    
-    fun int __mouseDeviceIndex()
-    {
-        // WIP: seemingly arbitrary mapping between track pad and mouse device indices
-        // Alternatively, could have user click each track pad in order to setup/init
-        [[2, 0], 
-         [3, 1, 0],
-         [4, 2, 1, 0]
-        ] @=> int trackPadToMouseDeviceIndexMapping[][];
-
-        return trackPadToMouseDeviceIndexMapping[n_trackPads - 1][m_nTrackPad]; 
     }
 }
 
@@ -192,4 +191,4 @@ public class TrackPad
 5 => TrackPad.MAX_NUM_TRACKPADS;
 7 => TrackPad.MAX_NUM_TOUCHES;
 
-<<< "Loaded", "TrackPad.ck" >>>;
+0 => TrackPad.n_trackPads;

@@ -1,31 +1,42 @@
 //
 //  tp.ck
 //
-//  Ilias Karim
-//  Stanford Laptop Orchestra (SLOrk)
+// Ilias Karim
+// Stanford Laptop Orchestra (SLOrk)
 //
 
 
-//
-// include depencies 
-//
+[
+    "Parameters.ck",
 
-// static utility class
-Machine.add("XD.ck");
+    // osc
+    "OscParamRecv.ck",
 
-// generic TrackPad superclass
-Machine.add("TrackPad.ck");
+    "OscParamSend.ck",
+    "OscBeatSend.ck",
 
-// drum trackpad instrument
-Machine.add("DrumPad.ck");
+    // static sample-playing utility class
+    "XD.ck",
+
+    // generic trackpad superclass
+    "TrackPad.ck",
+
+    // drum trackpad instrument
+    "DrumPad.ck",
+
+    // main script
+    "main.ck"
+
+] @=> string depencies[];
 
 
-//
-// execute main ChucK script
-// initialize trackpad instruments in main.ck
-//
+for (0 => int i; i < depencies.size(); i++)
+{
+    if (!Machine.add(depencies[i]))
+    {
+        <<< "[x_x] error loading depency", depencies[i] >>>;
+        break;
+    }
+}
 
-Machine.add("main.ck");
-
-
-<<< "[tp]", "loading..." >>>;
+<<< "[^_^]", "loaded all depencies" >>>;

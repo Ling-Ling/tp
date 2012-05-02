@@ -16,5 +16,5 @@ unzip tp.zip
 #Launch
 
 ```
-chuck --loop tp.ck
+chuck tp.ck
 ```

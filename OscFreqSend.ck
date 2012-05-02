@@ -104,6 +104,7 @@ public class OscFreqSend extends OscParamSend
             m_params.setInt("freq4", frequency[3]);
             // wait
             duration => now;
+            posInProgression++;
         }
     }
 }

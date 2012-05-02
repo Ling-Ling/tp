@@ -51,7 +51,7 @@ public class Sample
 
             if (m_params.getInt("n_hits") > 0 && m_files != NULL)
             {
-                XD.playSampleWithGain(m_files[Std.rand2(0, m_files.size() -1)], 1.);
+                XD.playSampleWithGain(m_files[Std.rand2(0, m_files.size() -1)], m_params.getFloat("gain"));
                 m_params.setInt("n_hits", m_params.getInt("n_hits") - 1);
             }
         }

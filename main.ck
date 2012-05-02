@@ -8,6 +8,9 @@
 
 8000 => int OSC_PORT;
 
+16 => int BAR_LENGTH;
+
+
 TrackPad @ tps[TrackPad.MAX_NUM_TRACKPADS];
 TrackPad.initTrackPads(tps);
 
@@ -24,6 +27,13 @@ oscBeatSend.initPort(OSC_PORT);
 // send beat 
 spork ~ oscBeatSend.beatLoopShred();
 
+oscBeatSend.m_params.setInt("beatNum", 0);
+oscBeatSend.m_params.setInt("barLength", BAR_LENGTH);
+oscBeatSend.m_params.setInt("ticksPerBeat", 8);
+oscBeatSend.m_params.setInt("bpm", 140);
+oscBeatSend.m_params.setFloat("swing", 0);
+
+
 OscFreqSend oscFreqSend;
 oscFreqSend.initPort(OSC_PORT);
 // send freq
@@ -38,8 +48,9 @@ OscParamRecv oscRecv;
 oscRecv.initPort(OSC_PORT);
 
 // receive beat
+oscRecv.listenForFloat("gain");
 oscRecv.listenForInt("beatNum");
-oscRecv.m_params.setIntRange("beatNum", 0, 8);
+oscRecv.m_params.setIntRange("beatNum", 0, BAR_LENGTH);
 
 //receive freqs
 oscRecv.listenForInt("freq1");
@@ -69,6 +80,8 @@ for (0 => int i; i < mice.size(); i++)
 
     spork ~ sample.m_params.bindIntShred("hit", mice[i].m_params, "mouse_click");
     spork ~ sample.m_params.bindIntShred("beatNum", oscRecv.m_params, "beatNum");
+
+    spork ~ sample.m_params.bindFloatShred("gain", oscRecv.m_params, "gain");
 }
 
 
@@ -76,12 +89,41 @@ for (0 => int i; i < mice.size(); i++)
 //  drums
 //
 
-DrumPad dp;
-["data/closehat.wav"] @=> dp.m_files;
-"data/hihat-open.wav" => dp.m_mixFile;
+for (0 => int i; i < tps.size(); i++)
+{
+    DrumPad dp;
 
-spork ~ dp.m_params.bindIntShred("beatNum", oscRecv.m_params, "beatNum");
-spork ~ dp.m_params.bindFloatShred("openness", tps[0].m_params, "y");
+    if (i == 0)
+    {
+        [
+         [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+         [1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1],
+         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        ] @=> dp.m_patterns;
+
+        ["data/closehat.wav"] @=> dp.m_files;
+        ["data/hihat-open.wav"] @=> dp.m_mixFiles;
+    }
+    else if (i == 1)
+    {
+        [
+         [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]
+        ] @=> dp.m_patterns;
+
+        ["data/snare.wav", "data/snareac.wav"] @=> dp.m_files;
+        ["data/snare-chili.wav", "data/snare-hop.wav"] @=> dp.m_mixFiles;
+    }
+
+    spork ~ dp.m_params.bindIntShred("beatNum", oscRecv.m_params, "beatNum");
+
+//    dp.m_params.setFloatRange("openness", 0, .5);
+    spork ~ dp.m_params.bindFloatShred("openness", tps[i].m_params, "y");
+
+    dp.m_params.setIntRange("pattern", 0, dp.m_patterns.size());
+    spork ~ dp.m_params.bindIntToFloatShred("pattern", tps[i].m_params, "x");
+
+    spork ~ dp.m_params.bindFloatShred("gain", oscRecv.m_params, "gain");
+}
 
 
 //

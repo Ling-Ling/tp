@@ -258,7 +258,6 @@ public class Parameters
                 ((((i - params.m_iMins[otherKey]) $ float) / params.m_iMaxs[otherKey]) * m_iMaxs[key]) $ int + m_iMins[key] => i;
             }
 
-
             setInt(key, i);
         }
     }

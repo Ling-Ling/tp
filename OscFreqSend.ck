@@ -16,6 +16,9 @@ public class OscFreqSend extends OscParamSend
 
         spork ~ sendIntShred("freq1");
         spork ~ sendIntShred("freq2");
+        spork ~ sendIntShred("freq3");
+        spork ~ sendIntShred("freq4");
+
 
         [4, 3, 5] @=> int major[];
         [3, 4, 5] @=> int minor[];

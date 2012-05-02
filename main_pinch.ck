@@ -43,15 +43,15 @@ spork ~ pp.m_params.bindFloatShred("distance", tps[0].m_params, "pinch_distance"
 spork ~ pp.m_params.bindIntShred("freq", oscRecv.m_params, "freq1");
 spork ~ pp.m_params.logIntShred("freq");
 
-spork ~ pp2.m_params.bindFloatShred("distance", tps[0].m_params, "pinch_distance");
+spork ~ pp2.m_params.bindFloatShred("distance", tps[1].m_params, "pinch_distance");
 spork ~ pp2.m_params.bindIntShred("freq", oscRecv.m_params, "freq2");
 spork ~ pp2.m_params.logIntShred("freq");
 
-spork ~ pp3.m_params.bindFloatShred("distance", tps[0].m_params, "pinch_distance");
+spork ~ pp3.m_params.bindFloatShred("distance", tps[2].m_params, "pinch_distance");
 spork ~ pp3.m_params.bindIntShred("freq", oscRecv.m_params, "freq3");
 spork ~ pp3.m_params.logIntShred("freq");
 
-spork ~ pp4.m_params.bindFloatShred("distance", tps[0].m_params, "pinch_distance");
+spork ~ pp4.m_params.bindFloatShred("distance", tps[3].m_params, "pinch_distance");
 spork ~ pp4.m_params.bindIntShred("freq", oscRecv.m_params, "freq4");
 spork ~ pp4.m_params.logIntShred("freq");
 

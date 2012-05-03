@@ -29,9 +29,10 @@ spork ~ oscFreqSend.freqLoopShred(10);
 spork ~ oscFreqSend.m_notePattern.m_params.bindIntToFloatShred("index", tps[0].m_params, "x");
 spork ~ oscFreqSend.m_modePattern.m_params.bindIntToFloatShred("index", tps[0].m_params, "x");
 
-// map TrackPad y to Pincher gain
-spork ~ oscFreqSend.sendFloatShred("pincher_gain");
-spork ~ oscFreqSend.m_params.bindFloatShred("pincher_gain",tps[0].m_params,"y");
+// map TrackPad y to master gain
+spork ~ oscGainSend.sendFloatShred("gain");
+spork ~ oscGainSend.m_params.bindFloatShred("gain",tps[1].m_params,"y");
+spork ~ oscGainSend.m_params.logFloatShred("gain");
 
 
 // 24h

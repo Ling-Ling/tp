@@ -21,11 +21,12 @@ public class PincherPad
     Envelope e => blackhole;
     .5::second => e.duration;
     now => time lastTouch;
+    0 => globalGain;
 
     // floats
     m_params.setFloat("distance", 0.);
     m_params.setFloat("freq", 0.);
-    m_params.setFloat("gain", 1.);
+    m_params.setFloat("gain", 0.);
     
 //    spork ~ m_params.logFloatShred("gain");
 
@@ -66,13 +67,13 @@ public class PincherPad
                 now + e.duration() => time later; //swoop for 1 second
                 //"manually" use changing envelope value to set freq
                 while (now < later) { 
-                    (e.value() $ float) / 1000 => s.gain;
-                    s.gain() * m_params.getFloat("gain") => s.vowel;
+                    globalGain * (e.value() $ float) / 1000 => s.gain;
+                    s.gain() => s.vowel;
                     1::samp => now;
                 }
             }else{
-                (e.target() $ float) / 1000 => s.gain;
-                s.gain() * m_params.getFloat("gain") => s.vowel;
+                 globalGain * (e.target() $ float) / 1000 => s.gain;
+                s.gain() => s.vowel;
             }
         }
     }
@@ -90,5 +91,17 @@ public class PincherPad
         }
     }
     
+    spork ~ _gainLoop();
+    fun void _gainLoop()
+    {
+        m_params.getNewIntEvent("gain") @=> Event event;
+        
+        while (1)
+        {
+            event => now;
+            Std.mtof(m_params.getFloat(gain")) => globalGain;
+            <<<globalGain>>>;
+        }
+    }
 
 }

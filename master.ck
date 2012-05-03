@@ -8,6 +8,15 @@
 
 8000 => int OSC_PORT;
 
+// trackpads
+TrackPad @ tps[TrackPad.MAX_NUM_TRACKPADS];
+TrackPad.initTrackPads(tps);
+
+
+//
+//  Pincher master
+//
+
 // mode progression
 [
  XD.MODE("major"),
@@ -36,11 +45,7 @@
 ] 
 @=> int noteProgression[];
 
-// trackpads
-TrackPad @ tps[TrackPad.MAX_NUM_TRACKPADS];
-TrackPad.initTrackPads(tps);
-
-// osc pincher frequencies master
+// osc pincher frequency patterns master
 OscFreqSend oscFreqSend;
 oscFreqSend.initPort(OSC_PORT);
 oscFreqSend.m_modePattern.init(modeProgression);
@@ -51,17 +56,19 @@ spork ~ oscFreqSend.freqLoopShred(10);
 spork ~ oscFreqSend.m_notePattern.m_params.bindIntToFloatShred("index", tps[0].m_params, "x");
 spork ~ oscFreqSend.m_modePattern.m_params.bindIntToFloatShred("index", tps[0].m_params, "x");
 
-// map TrackPad y to master gain
+// map TrackPad y to osc gain master
 spork ~ oscFreqSend.sendFloatShred("gain");
 spork ~ oscFreqSend.m_params.bindFloatShred("gain",tps[0].m_params,"y");
 
-/*
+
+//
+//  Beat Master 
+//
+
 // osc beat master
 OscBeatSend oscBeatSend;
 oscBeatSend.initPort(OSC_PORT);
-// send beat 
 spork ~ oscBeatSend.beatLoopShred();
-*/
 
 // 24h
 1::day => now;

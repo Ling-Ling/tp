@@ -15,21 +15,19 @@ public class XD
     fun static int KEY(string key)
     {
         int _keys[0];
-        48 => _keys["c"];
-        49 => _keys["c#"];
-        50 => _keys["d"];
-        51 => _keys["d#"];
-        52 => _keys["e"];
-        53 => _keys["f"];
-        54 => _keys["f#"];
-        55 => _keys["g"];
-        56 => _keys["g#"];
-        57 => _keys["a"];
-        58 => _keys["a#"];
-        59 => _keys["b"];
+        36 => _keys["c"];
+        37 => _keys["c#"];
+        38 => _keys["d"];
+        39 => _keys["d#"];
+        40 => _keys["e"];
+        41 => _keys["f"];
+        42 => _keys["f#"];
+        43 => _keys["g"];
+        44 => _keys["g#"];
+        45 => _keys["a"];
+        46 => _keys["a#"];
+        47 => _keys["b"];
 
-        <<< "key:", key >>>;
-        <<< _keys.size() >>>;
         return _keys[key];
     }
 
@@ -61,6 +59,22 @@ public class XD
         [3, 3, 3, 3] @=> _modeOffsets[MODE("fdim")];
 
         return _modeOffsets[i];
+    }
+
+    fun static int[] createChord(int base, int mode, int n)
+    {
+        int frequency[n];
+
+        if (base != 0)
+        {
+            for (0 => int i; i < n; i++)
+            {
+                base => frequency[i];
+                base + XD.MODE_OFFSETS(mode)[i % 3] => base;
+            }
+        }
+
+        return frequency;
     }
 
     fun static void playSampleWithGain(string file, float gain)

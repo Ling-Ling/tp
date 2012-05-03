@@ -11,6 +11,10 @@
  */
 public class Parameters
 {   
+    /**  ... */
+    StringEvent m_event;
+
+
     //
     //  floats
     //
@@ -30,6 +34,9 @@ public class Parameters
             f => events[i].f;
             events[i].signal();
         }
+
+        key @=> m_event.s;
+        m_event.signal();
     }
 
     fun void setNormalFloat(string key, float f)
@@ -166,7 +173,6 @@ public class Parameters
 
     int m_iValues[0];
     IntEvent iEvents[0][0] @=> IntEvent @ m_iEvents[][];
-    //IntEvent @ m_iEvents[][];
     int m_iMins[0];
     int m_iMaxs[0];
 
@@ -179,7 +185,11 @@ public class Parameters
             i + m_iMins[key] => i;
         }
 
+        // set int value
         i => m_iValues[key];
+
+        key @=> m_event.s;
+        m_event.signal();
 
         if (m_iEvents[key] == NULL)
             return;
@@ -192,6 +202,7 @@ public class Parameters
             i => events[j].i;
             events[j].signal();
         }
+
     }
 
     fun int getInt(string key)
@@ -217,18 +228,27 @@ public class Parameters
             setInt(key, max);
     }
     
+    fun void _addFloatEvent(string key, FloatEvent event)
+    {
+        getFloatEvents(key) @=> FloatEvent events[];
+
+        FloatEvent @ newEvents[events.size() + 1];
+
+        for (0 => int i; i < events.size(); i++)
+            events[i] @=> newEvents[i];
+
+        event @=> newEvents[newEvents.size() - 1];
+
+        newEvents @=> m_fEvents[key];
+    }
+
+
     fun void _addIntEvent(string key, IntEvent event)
     {
-        if (m_iEvents[key] == NULL || m_iEvents[key].size() == 0)
-        {
-            //getIntEvents(key) @=> IntEvent events[];
-            [event] @=> m_iEvents[key];
-            return;
-        } 
+        if (m_iEvents[key] == NULL)
+            IntEvent events[0] @=> m_iEvents[key];
 
         m_iEvents[key] @=> IntEvent events[];
-
-        <<< key, events.size() >>>; 
 
         IntEvent @ newEvents[events.size() + 1];
 
@@ -267,7 +287,6 @@ public class Parameters
         while (1)
         {
             event => now;
-
             event.i => int i;
 
             if (params.m_iMins[otherKey] != params.m_iMaxs[otherKey] 
@@ -292,6 +311,8 @@ public class Parameters
             {
                 params.getNormalizedFloat(otherKey) => float f;
                 setInt(key, (f * m_iMaxs[key]) $ int + m_iMins[key]);
+
+                //<<< key, f, (f * m_iMaxs[key]) $ int + m_iMins[key] >>>;
             }
             else
             {
@@ -299,4 +320,58 @@ public class Parameters
             }
         }
     }
+
+
+    // TODO: abstract this 
+
+/*
+    fun void bindMidiNoteIntToPattern(string key, int [])
+    {
+    }
+
+
+    // TODO: abstract this 
+
+    fun void bindMidiNoteIntToPattern(string key, ParamTuplePattern pattern)
+    {
+        spork ~ _noteLoop(key, pattern);
+
+        spork ~ _modeLoop(key, pattern);
+    }
+
+    fun void _sendFreqs(string key, ParamTuplePattern pattern)
+    {
+        pattern.m_params.getInt("value0") => int mode;
+        pattern.m_params.getInt("value1") => int base;
+
+        // TODO: abstract this
+        int frequency[20]; // TODO: remove constant
+        XD.createChord(base, mode, frequency.size()) @=> frequency;
+
+        for (0 => int i; i < frequency.size(); i++)
+           m_params.setInt("freq" + i, frequency[i]);
+    }
+
+    fun void _noteLoop(string key, ParamTuplePattern pattern)
+    {
+        pattern.m_params.getNewIntEvent("value0") @=> IntEvent e;
+
+        while (1)
+        {
+            e => now;
+            _sendFreqs(key, pattern);
+        }
+    }
+;
+    fun void _modeLoop(string key, ParamTuplePattern pattern))
+    {
+        pattern.m_params.getNewIntEvent("value1") @=> IntEvent e;
+
+        while (1)
+        {
+            e => now;
+            _sendFreqs(key, pattern);
+        }
+    }
+*/
 }

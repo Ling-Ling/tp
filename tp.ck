@@ -1,61 +1,82 @@
 //
-//  tp.ck
+//  TP.ck
 //
-// Ilias Karim
+// Ilias Karim, Jonathan Tilley, & Ling-Ling Zhang
 // Stanford Laptop Orchestra (SLOrk)
-//
 
+TP _tp;
 
+/**  I AM CORNHOLIO!? */
+public class TP
+{
+    /**  Depencies. Include all public classes used across main scripts */
+    [
+        // static utility class (aka bad practice aka anti-pattern)
+        "XD.ck",
 
-/**  Depencies. Inclue all public classes used across main scripts */
-[
-    // static utility class 
-    "XD.ck",
+        "StringEvent.ck",
+        "IntEvent.ck",
+        "FloatEvent.ck",
+        "Parameters.ck",
+        "ParamIntPattern.ck",
+        "ParamIntPatterns.ck",
+        "Score.ck",
 
-    "IntEvent.ck",
-    "FloatEvent.ck",
-    "Parameters.ck",
-    "ParamIntPattern.ck",
+        //"ParamTuplePattern.ck",
+
+        // 
+        //  osc
+
+        "OscParamRecv.ck",
+        "OscParamSend.ck",
+        "OscBeatSend.ck",
+        "OscFreqSend",
+
+        //
+        //  interfaces
+
+        "TrackPad.ck",
+        // TODO: "Keyboard.ck",
+
+        //
+        //  instruments
+
+        "Wub.ck",
+        "SampleSet.ck",
+        "DrumPad.ck",
+        // vox 
+        "PincherPad.ck"
+    ] 
+    @=> string _depencies[];
+
+    "classes/" @=> string depency_dir;
+
+    for (0 => int i; i < _depencies.size(); i++)
+        // spork each depency
+        if (!Machine.add(depency_dir + _depencies[i]))
+        {
+            <<< "[x_x]", "error loading depency", _depencies[i] >>>;
+            Machine.crash(); 
+        }
+
+    <<< "[^_^]", "loaded all depencies" >>>;
+
 
     // 
-    //  osc
+    //  static vars & methods
 
-    "OscParamRecv.ck",
-    "OscParamSend.ck",
-    "OscBeatSend.ck",
-    "OscFreqSend",
+    /**  OSC port static int */
+    8000 => static int OSC_PORT;
 
-    //
-    //  interfaces
+    /**  Number of channels */
+    Math.min(6, dac.channels()) $ int => static int NUM_CHANNELS;
 
-    "Mouse.ck",
-    "TrackPad.ck",
-    // TODO: "Keyboard.ck",
+    static TP @ forMy;
 
-    //
-    //  instruments
+    _tp @=> TP.forMy;
 
-    "Wub.ck",
-
-    "Sample.ck",
-
-    // drum beat
-    "DrumPad.ck",
-    
-    // pincher trackpad instrument
-    "PincherPad.ck"
-] 
-@=> string depencies[];
-
-/**  Depency directory */
-"classes/" @=> string depency_dir;
-
-// spork each depency
-for (0 => int i; i < depencies.size(); i++)
-    if (!Machine.add(depency_dir + depencies[i]))
-    {
-        <<< "[x_x] error loading depency", depencies[i] >>>;
-        Machine.crash(); 
-    }
-
-<<< "[^_^]", "loaded all depencies" >>>;
+    /**  "TP FOR MY BUNGHOLE!" */
+    UGen bunghole;
+    for (0 => int i; i < NUM_CHANNELS; i++)
+        bunghole => dac.chan(i);
+}

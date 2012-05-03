@@ -16,6 +16,27 @@ public class TrackPad
     static int MAX_NUM_TOUCHES;
 
 
+    fun static TrackPad[] getTPs()
+    {
+        // get command line trackpad numbers
+        int TRACKPAD_NUM[me.args()];
+        for (int i; i < me.args(); i++)
+            Std.atoi(me.arg(i)) => TRACKPAD_NUM[i];
+
+        TrackPad @ tps[Math.min(me.args(), TrackPad.MAX_NUM_TRACKPADS) $ int];
+
+        for (0 => int i; i < tps.size(); i++)
+        {
+            TrackPad tp;
+            tp.initTrackPad(TRACKPAD_NUM[i]) @=> tps[i];
+            
+            if (tp == NULL)
+                <<< "[x_x] error initializing trackpad", i >>>;
+        }
+
+        return tps;
+    }
+
     fun static void initTrackPads(TrackPad tps[])
     {
         // init as many trackpad touch handlers as possible

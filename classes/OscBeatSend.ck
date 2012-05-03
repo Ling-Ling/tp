@@ -11,7 +11,7 @@ public class OscBeatSend extends OscParamSend
     m_params.setInt("beatNum", 0);
     m_params.setInt("barLength", 8);
     m_params.setInt("ticksPerBeat", 4);
-    m_params.setInt("bpm", 130);
+    m_params.setInt("bpm", 110);
 
     m_params.setFloat("swing", .2);
 

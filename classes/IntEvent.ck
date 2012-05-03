@@ -1,6 +1,6 @@
 
 
-public class IntEvent extends Event
+public class StringEvent extends Event
 {
-    0 => int i;
+    string s;
 }

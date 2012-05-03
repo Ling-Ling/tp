@@ -6,27 +6,26 @@
 //
 
 
-
 /**
- *  Static utility class
+ *  Static utility class XD
  */
 public class XD
 {
     fun static int KEY(string key)
     {
         int _keys[0];
+        25 => _keys["c#"];
+        26 => _keys["d"];
+        27 => _keys["d#"];
+        28 => _keys["e"];
+        29 => _keys["f"];
+        30 => _keys["f#"];
+        31 => _keys["g"];
+        32 => _keys["g#"];
+        33 => _keys["a"];
+        34 => _keys["a#"];
+        35 => _keys["b"];
         36 => _keys["c"];
-        37 => _keys["c#"];
-        38 => _keys["d"];
-        39 => _keys["d#"];
-        40 => _keys["e"];
-        41 => _keys["f"];
-        42 => _keys["f#"];
-        43 => _keys["g"];
-        44 => _keys["g#"];
-        45 => _keys["a"];
-        46 => _keys["a#"];
-        47 => _keys["b"];
 
         return _keys[key];
     }

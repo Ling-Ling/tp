@@ -8,7 +8,11 @@
 
 public class PincherPad 
 {
-
+ 
+    //constants
+    .8 => float MAX_GAIN;
+    
+    
     //
     //  Parameters
     // 
@@ -16,16 +20,9 @@ public class PincherPad
     Parameters m_params;
 
     //units
-    FMVoices s;
-    Gain g;
+    FMVoices s => Gain g => dac;
     0.0=>s.gain;
-    Envelope e => blackhole;
-    .5::second => e.duration;
     now => time lastTouch;
-
-    Math.min(6, dac.channels()) $ int => int NUM_CHANNELS;
-    for (0 => int i; i < NUM_CHANNELS; i++)
-        s => g => dac.chan(i);
 
     // floats
     m_params.setFloat("distance", 0.);
@@ -36,14 +33,17 @@ public class PincherPad
 
     spork ~ _fadeOuter();
     fun void _fadeOuter(){
+        Envelope e => blackhole;
+        .5::second => e.duration;
         while(1){
             1::second => now;
             if(now - lastTouch > 1::second){
-                0 => e.target;
+                s.gain() => e.value;
+                0. => e.target;
                 now + e.duration() => time later; //swoop for 1 second
                 //"manually" use changing envelope value to set freq
                 while (now < later) { 
-                    (e.value() $ float) / 1000 => s.gain;
+                    e.value() => s.gain;
                     s.gain() => s.vowel;
                     1::samp => now;
                 }
@@ -55,28 +55,30 @@ public class PincherPad
     fun void _pinchLoop()
     {
         m_params.getNewFloatEvent("distance") @=> Event event;
-
+        Envelope e => blackhole;
+        .5::second => e.duration;
+        
         while (1)
         {
             event => now;
             now => lastTouch;
             m_params.getFloat("distance") => float dist;
-            (s.gain() * 1000) $ int => e.value;
-            if(dist > .9){
-                900 => e.target;
+            s.gain() => e.value;
+            if(dist > MAX_GAIN){
+                MAX_GAIN => e.target;
             }else{
-                (dist * 1000) $ int => e.target;
+                dist => e.target;
             }
-            if(Std.fabs((e.target() / 1000) - s.gain()) > .2){
+            if(Std.fabs(e.target() - s.gain()) > .2){
                 now + e.duration() => time later; //swoop for 1 second
                 //"manually" use changing envelope value to set freq
                 while (now < later) { 
-                    (e.value() $ float) / 1000 => s.gain;
+                    e.value() => s.gain;
                     s.gain() => s.vowel;
                     1::samp => now;
                 }
             }else{
-                 (e.target() $ float) / 1000 => s.gain;
+                 e.target() => s.gain;
                 s.gain() => s.vowel;
             }
         }
@@ -99,12 +101,20 @@ public class PincherPad
     fun void _gainLoop()
     {
         m_params.getNewFloatEvent("gain") @=> Event event;
+        Envelope e => blackhole;
+        .5::second => e.duration;
         
-        while (1)
-        {
+        while(1){
             event => now;
-            m_params.getFloat("gain") => g.gain;
-        }
+             g.gain() => e.value;
+            m_params.getFloat("gain") => e.target;
+            now + e.duration() => time later; //swoop for 1 second
+            //"manually" use changing envelope value to set freq
+            while (now < later) { 
+                    e.value() => g.gain;
+                    1::samp => now;
+           }
+       }           
     }
-
+    
 }

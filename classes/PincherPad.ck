@@ -94,7 +94,7 @@ public class PincherPad
     spork ~ _gainLoop();
     fun void _gainLoop()
     {
-        m_params.getNewIntEvent("gain") @=> Event event;
+        m_params.getNewFloatEvent("gain") @=> Event event;
         
         while (1)
         {

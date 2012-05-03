@@ -27,15 +27,15 @@ spork ~ oscBeatSend.beatLoopShred();
 OscFreqSend oscFreqSend;
 oscFreqSend.initPort(OSC_PORT);
 // send freq
-spork ~ oscFreqSend.freqLoopShred();
+spork ~ oscFreqSend.freqLoopShred(10);
 
-OscParamSend oscGainSend;
-oscGainSend.initPort(OSC_PORT);
+//OscParamSend oscGainSend;
+//oscGainSend.initPort(OSC_PORT);
 
 //master gain control
-spork ~ oscGainSend.sendFloatShred("gain");
-spork ~ oscGainSend.m_params.bindFloatShred("gain",tps[1].m_params,"y");
-spork ~ oscGainSend.m_params.logFloatShred("gain");
+//spork ~ oscGainSend.sendFloatShred("gain");
+//spork ~ oscGainSend.m_params.bindFloatShred("gain",tps[0].m_params,"y");
+//spork ~ oscGainSend.m_params.logFloatShred("gain");
 
 
 // 24h

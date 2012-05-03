@@ -109,7 +109,7 @@ public class PincherPad
             m_params.getFloat("gain") => e.target;
             now + e.duration() => time later; //swoop for 1 second
             //"manually" use changing envelope value to set freq
-            g.gain => e.value;
+            g.gain => e.value();
             while (now < later) { 
                     e.value() => g.gain;
                     1::samp => now;

@@ -16,12 +16,11 @@ public class PincherPad
     Parameters m_params;
 
     //units
-    FMVoices s => dac;
+    FMVoices s => Gain g => dac;
     0.0=>s.gain;
     Envelope e => blackhole;
     .5::second => e.duration;
     now => time lastTouch;
-    1. => float globalGain;
 
     // floats
     m_params.setFloat("distance", 0.);
@@ -40,7 +39,7 @@ public class PincherPad
                 //"manually" use changing envelope value to set freq
                 while (now < later) { 
                     (e.value() $ float) / 1000 => s.gain;
-                    s.gain() * globalGain => s.vowel;
+                    s.gain() => s.vowel;
                     1::samp => now;
                 }
             }
@@ -57,22 +56,22 @@ public class PincherPad
             event => now;
             now => lastTouch;
             m_params.getFloat("distance") => float dist;
-            (s.gain() * 1000 * globalGain) $ int => e.value;
+            (s.gain() * 1000) $ int => e.value;
             if(dist > .9){
                 900 => e.target;
             }else{
                 (dist * 1000) $ int => e.target;
             }
-            if(Std.fabs((e.target() / 1000) - s.gain() * globalGain) > .2){
+            if(Std.fabs((e.target() / 1000) - s.gain()) > .2){
                 now + e.duration() => time later; //swoop for 1 second
                 //"manually" use changing envelope value to set freq
                 while (now < later) { 
-                    globalGain * (e.value() $ float) / 1000 => s.gain;
+                    (e.value() $ float) / 1000 => s.gain;
                     s.gain() => s.vowel;
                     1::samp => now;
                 }
             }else{
-                 globalGain * (e.target() $ float) / 1000 => s.gain;
+                 (e.target() $ float) / 1000 => s.gain;
                 s.gain() => s.vowel;
             }
         }
@@ -91,16 +90,16 @@ public class PincherPad
         }
     }
     
-    //spork ~ _gainLoop();
-    //fun void _gainLoop()
-    //{
-    //    m_params.getNewFloatEvent("gain") @=> Event event;
+    spork ~ _gainLoop();
+    fun void _gainLoop()
+    {
+        m_params.getNewFloatEvent("gain") @=> Event event;
         
-    //    while (1)
-    //    {
-    //        event => now;
-    //        Std.mtof(m_params.getFloat("gain")) => globalGain;
-    //    }
-    //}
+        while (1)
+        {
+            event => now;
+            m_params.getFloat("gain") => g.gain;
+        }
+    }
 
 }

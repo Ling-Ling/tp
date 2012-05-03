@@ -21,11 +21,16 @@ public class PincherPad
     Parameters m_params;
 
     //units
-    FMVoices s => Gain g => dac;
+    FMVoices s;
+    Gain g;
     0.0=>s.gain;
     Envelope e => blackhole;
     .5::second => e.duration;
     now => time lastTouch;
+
+    Math.min(6, dac.channels()) $ int => int NUM_CHANNELS;
+    for (0 => int i; i < NUM_CHANNELS; i++)
+        s => g => dac.chan(i);
 
     // floats
     m_params.setFloat("distance", 0.);

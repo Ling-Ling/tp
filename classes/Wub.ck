@@ -19,7 +19,9 @@ public class Wub
     Envelope m_env;
     NRev m_rev;
 
-    m_sawOsc => m_res => m_env => m_rev => dac;
+    Math.min(6, dac.channels()) $ int => int NUM_CHANNELS;
+    for (0 => int i; i < NUM_CHANNELS; i++)
+        m_sawOsc => m_res => m_env => m_rev => dac.chan(i);
 
     Delay m_delay;
     m_env => m_delay => m_rev;
@@ -36,7 +38,7 @@ public class Wub
 
     // on/off
     m_params.setInt("play", 0);
-    m_params.setIntRange("play", 0, 1);
+    //m_params.setIntRange("play", 0, 1);
 
     spork ~ _playLoop();
     fun void _playLoop()

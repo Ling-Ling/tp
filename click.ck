@@ -1,5 +1,5 @@
 //
-//  main.ck
+//  click.ck
 //
 // Ilias Karim
 // Stanford Laptop Orchestra (SLOrk)
@@ -9,7 +9,7 @@
 8000 => int OSC_PORT;
 
 // mice
-Mouse.initMice(4) @=> Mouse mice[];
+Mouse.initMice(5) @=> Mouse mice[];
 
 // osc beat slave
 OscParamRecv oscRecv;

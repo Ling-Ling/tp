@@ -21,7 +21,7 @@ public class PincherPad
     Envelope e => blackhole;
     .5::second => e.duration;
     now => time lastTouch;
-    0 => globalGain;
+    0 => float globalGain;
 
     // floats
     m_params.setFloat("distance", 0.);
@@ -99,8 +99,7 @@ public class PincherPad
         while (1)
         {
             event => now;
-            Std.mtof(m_params.getFloat(gain")) => globalGain;
-            <<<globalGain>>>;
+            Std.mtof(m_params.getFloat("gain")) => globalGain;
         }
     }
 

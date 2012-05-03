@@ -34,7 +34,7 @@ oscGainSend.initPort(OSC_PORT);
 
 //master gain control
 spork ~ oscGainSend.sendFloatShred("gain");
-spork ~ oscGainSend.m_params.bindFloatShred("gain",tps[0].m_params,"y");
+spork ~ oscGainSend.m_params.bindFloatShred("gain",tps[1].m_params,"y");
 spork ~ oscGainSend.m_params.logFloatShred("gain");
 
 

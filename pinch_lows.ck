@@ -6,7 +6,7 @@
 //
 
 4 => int numTrackPads;
-1 => int startFreq;
+0 => int startFreq;
 
 8000 => int OSC_PORT;
 
@@ -22,12 +22,16 @@ TrackPad.initTrackPads(tps);
 
 OscParamRecv oscRecv;
 oscRecv.initPort(OSC_PORT);
+oscRecv.listenForInt("gain");
+
 
 for( 0 => int i; i< numTrackPads; i++){
     oscRecv.listenForInt("freq"+(startFreq+i));
+    
     PincherPad pp;
     spork ~ pp.m_params.bindFloatShred("distance", tps[i+1].m_params, "pinch_distance");
     spork ~ pp.m_params.bindIntShred("freq", oscRecv.m_params, "freq"+(startFreq+i));
+    spork ~ pp.m_params.bindIntShred("gain", oscRecv.m_params, "gain");
     spork ~ pp.m_params.logIntShred("freq");
 }
 

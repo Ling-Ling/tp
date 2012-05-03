@@ -9,7 +9,7 @@
 8000 => int OSC_PORT;
 
 // trackpads
-TrackPad @ tps[TrackPad.MAX_NUM_TRACKPADS];
+TrackPad @ tps[1];
 TrackPad.initTrackPads(tps);
 
 
@@ -48,7 +48,7 @@ TrackPad.initTrackPads(tps);
 // osc pincher frequency patterns master
 OscFreqSend oscFreqSend;
 oscFreqSend.initPort(OSC_PORT);
-oscFreqSend.m_modePattern.init(modeProgression);
+oscFreqSend.m_modePattern.initWithPattern(modeProgression);
 oscFreqSend.m_notePattern.init(noteProgression);
 spork ~ oscFreqSend.freqLoopShred(10);
 
@@ -57,99 +57,8 @@ spork ~ oscFreqSend.m_notePattern.m_params.bindIntToFloatShred("index", tps[1].m
 spork ~ oscFreqSend.m_modePattern.m_params.bindIntToFloatShred("index", tps[1].m_params, "x");
 
 // map TrackPad y to osc pinch gain left
-spork ~ oscFreqSend.sendFloatShred("pinchGainL");
-spork ~ oscFreqSend.m_params.bindFloatShred("pinchGainL",tps[0].m_params,"y");
-
-// map TrackPad y to osc wub gain
-spork ~ oscFreqSend.sendFloatShred("wubGain");
-spork ~ oscFreqSend.m_params.bindFloatShred("wubGain",tps[1].m_params,"y");
-
-// map TrackPad y to osc pinch gain right
-spork ~ oscFreqSend.sendFloatShred("pinchGainR");
-spork ~ oscFreqSend.m_params.bindFloatShred("pinchGainR",tps[2].m_params,"y");
-
-
-//
-//  Beat Master 
-//
-
-// osc beat master
-OscBeatSend oscBeatSend;
-oscBeatSend.initPort(OSC_PORT);
-spork ~ oscBeatSend.beatLoopShred();
-
-
-
-OscParamRecv oscRecv;
-oscRecv.initPort(OSC_PORT);
-oscRecv.listenForInt("freq0");
-oscRecv.listenForInt("beatNum");
-
-DrumPad dp;
-
-[ 
- [0, 0, 0, 0, 0, 0, 0, 0, 
-  0, 0, 0, 0, 0, 0, 0, 0, 
-  0, 0, 0, 0, 0, 0, 0, 0, 
-  0, 0, 0, 0, 0, 0, 0, 0],
-
- [1, 0, 0, 0, 0, 0, 0, 0, 
-  0, 0, 0, 0, 0, 0, 0, 0, 
-  0, 0, 0, 0, 0, 0, 0, 0, 
-  0, 0, 0, 0, 0, 1, 0, 0],
-
- [1, 0, 0, 0, 0, 0, 0, 0, 
-  0, 0, 0, 0, 0, 0, 0, 0, 
-  1, 0, 0, 0, 0, 0, 0, 0, 
-  0, 0, 0, 0, 0, 1, 0, 0],
-
- [1, 0, 0, 0, 0, 0, 0, 0, 
-  1, 0, 0, 0, 0, 0, 0, 0, 
-  1, 0, 0, 0, 0, 0, 0, 0, 
-  1, 0, 0, 0, 0, 1, 0, 0],
-
- [1, 0, 0, 0, 1, 0, 0, 0, 
-  1, 0, 0, 0, 1, 0, 0, 0, 
-  1, 0, 0, 0, 1, 0, 0, 0, 
-  1, 0, 0, 0, 1, 0, 1, 0],
-
- [1, 0, 1, 0, 1, 0, 0, 0, 
-  1, 0, 0, 0, 1, 0, 1, 0, 
-  1, 0, 1, 0, 1, 0, 0, 0, 
-  1, 0, 0, 0, 1, 0, 1, 1],
-
- [1, 0, 1, 0, 1, 0, 1, 0,
-  1, 0, 1, 0, 1, 0, 1, 0,
-  1, 0, 1, 0, 1, 0, 1, 0,
-  0, 1, 0, 1, 0, 1, 1, 1]
-
-] @=> dp.m_patterns;
-
-["data/closehat.wav"] @=> dp.m_files;
-["data/hihat-open.wav"] @=> dp.m_mixFiles;
-
-
-spork ~ dp.m_params.bindIntShred("beatNum", oscRecv.m_params, "beatNum");
-
-dp.m_params.setFloatRange("openness", 0, .5);
-spork ~ dp.m_params.bindFloatShred("openness", tps[2].m_params, "y");
-
-dp.m_params.setIntRange("pattern", 0, dp.m_patterns.size());
-spork ~ dp.m_params.bindIntToFloatShred("pattern", tps[2].m_params, "x");
-
-
-//
-// wub
-//
-
-Mouse.initMice(2) @=> Mouse @ mice[];
-
-Wub wub;
-
-spork ~ wub.m_params.bindIntShred("play", mice[1].m_params, "mouse_click");
-
-spork ~ wub.m_params.bindIntShred("midiNote", oscRecv.m_params, "freq0");
-
+spork ~ oscFreqSend.sendFloatShred("pinchGain");
+spork ~ oscFreqSend.m_params.bindFloatShred("pinchGain",tps[1].m_params,"y");
 
 // 24h
 1::day => now;

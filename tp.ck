@@ -6,8 +6,12 @@
 //
 
 
+
 /**  Depencies. Inclue all public classes used across main scripts */
 [
+    // static utility class 
+    "XD.ck",
+
     "IntEvent.ck",
     "FloatEvent.ck",
     "Parameters.ck",
@@ -33,8 +37,6 @@
 
     "Wub.ck",
 
-    // static sample-playing utility class & instrument
-    "XD.ck",
     "Sample.ck",
 
     // drum beat

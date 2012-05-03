@@ -27,7 +27,7 @@ public class PincherPad
     m_params.setFloat("freq", 0.);
     m_params.setFloat("gain", 1.);
     
-    spork ~ m_params.logFloatShred("gain");
+//    spork ~ m_params.logFloatShred("gain");
 
     spork ~ _fadeOuter();
     fun void _fadeOuter(){

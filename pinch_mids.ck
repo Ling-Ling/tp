@@ -28,7 +28,7 @@ for( 0 => int i; i< numTrackPads; i++){
     PincherPad pp;
     spork ~ pp.m_params.bindFloatShred("distance", tps[i+1].m_params, "pinch_distance");
     spork ~ pp.m_params.bindIntShred("freq", oscRecv.m_params, "freq"+(startFreq+i));
-    spork ~ pp.m_params.logIntShred("freq");
+//    spork ~ pp.m_params.logIntShred("freq");
 }
 
 

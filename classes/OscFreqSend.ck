@@ -5,9 +5,35 @@
 // Stanford Laptop Orchestra (SLOrk)
 //
 
+
+
 public class OscFreqSend extends OscParamSend
 {
-    4::second => dur duration;
+    int keys[0];
+    48 => keys["c"];
+    49 => keys["c#"];
+    50 => keys["d"];
+    51 => keys["d#"];
+    52 => keys["e"];
+    53 => keys["f"];
+    54 => keys["f#"];
+    55 => keys["g"];
+    56 => keys["g#"];
+    57 => keys["a"];
+    58 => keys["a#"];
+    59 => keys["b"];
+
+    int modes[0];
+    0 => modes["major"];
+    1 => modes["minor"];
+    2 => modes["dim"];
+    3 => modes["major7"];
+    4 => modes["dom"];
+    5 => modes["minor7"];
+    6 => modes["hdim"];
+    7 => modes["fdim"];
+
+    1::second => dur duration;
     
     [4, 3, 5] @=> int major[];
     [3, 4, 5] @=> int minor[];
@@ -18,7 +44,7 @@ public class OscFreqSend extends OscParamSend
     [3, 3, 4, 2] @=> int hdim[];
     [3, 3, 3, 3] @=> int fdim[];
 
-    fun int[] createChord(int base, string mode, int n)
+    fun int[] createChord(int base, int mode, int n)
     {
         int frequency[n];
 
@@ -26,35 +52,35 @@ public class OscFreqSend extends OscParamSend
         {
             for (0 => int i; i < n; i++)
             {
-                if (mode == "major") {
+                if (mode == modes["major"]) {
                     base => frequency[i];
                     base + major[i%3] => base;
                 }
-                if (mode == "minor") {
+                if (mode == modes["minor"]) {
                     base => frequency[i];
                     base + minor[i%3] => base;
                 }
-                if (mode == "dim") {
+                if (mode == modes["dim"]) {
                     base => frequency[i];
                     base + dim[i%3] => base;
                 }
-               if (mode == "major7") {
+               if (mode == modes["major7"]) {
                     base => frequency[i];
                     base + major7[i%3] => base;
                 }
-                if (mode == "major77") {
+                if (mode == modes["major77"]) {
                     base => frequency[i];
                     base + dom[i%3] => base;
                 }
-                if (mode == "min7") {
+                if (mode == modes["min7"]) {
                     base => frequency[i];
                     base + minor7[i%3] => base;
                 }
-               if (mode == "dim7") {
+               if (mode == modes["dim7"]) {
                     base => frequency[i];
                     base + hdim[i%3] => base;
                 }
-                if (mode == "dim77") {
+                if (mode == modes["dim77"]) {
                     base => frequency[i];
                     base + fdim[i%3];
                 }
@@ -63,10 +89,16 @@ public class OscFreqSend extends OscParamSend
 
         return frequency;
     }
+    
 
-    fun void freqLoopShred()
+    ParamIntPattern notePattern;
+    ParamIntPattern modePattern;
+    
+    0 => int m_n;
+
+    fun void freqLoopShred(int n)
     {
-        10 => int n;
+        n => m_n;
 
         spork ~ sendIntShred("freq1");
         spork ~ sendIntShred("freq2");
@@ -83,53 +115,103 @@ public class OscFreqSend extends OscParamSend
         //0 => int midOctave;
         //1 => int highOctave;
 
+        [
+         modes["major"],
+         modes["minor"],
+         modes["minor"],
+         modes["major"],
+         modes["major"],
+         modes["major"],
+         modes["minor"],
+         modes["dim"],
+         modes["major"]
+        ]
+        @=> int modeProgression[];
 
-        string noteChar;
+        modePattern.init(modeProgression);
 
-        ["major","minor","minor","major","major","major","minor","dim","major"] @=> string modeProgression[];
+//        spork ~ modePattern.m_params.logIntShred("value");
 
-        ["c", "e", "a", "g", "c", "f", "d", "b", "c"] @=> string noteProgression[];
 
-        int noteBases[0];
-        48 => noteBases["c"];
-        49 => noteBases["c#"];
-        50 => noteBases["d"];
-        51 => noteBases["d#"];
-        52 => noteBases["e"];
-        53 => noteBases["f"];
-        54 => noteBases["f#"];
-        55 => noteBases["g"];
-        56 => noteBases["g#"];
-        57 => noteBases["a"];
-        58 => noteBases["a#"];
-        59 => noteBases["b"];
+        [
+         keys["c"],
+         keys["e"],
+         keys["a"],
+         keys["g"],
+         keys["c"],
+         keys["f"],
+         keys["d"],
+         keys["b"],
+         keys["c"]
+        ] 
+        @=> int noteProgression[];
 
-        0 => int posInProgression;
-        //I iii vi V I IV ii vii I
-        0 => int wait;
-        0 => int i;
-        0 => int base;
-        "major" => string mode;
+        notePattern.init(noteProgression);
 
-        int frequency[n];        
+
+        
+
 
         while (1)
         {
-            modeProgression[posInProgression%9] => mode;
-            noteProgression[posInProgression%9] => noteChar;
-                       
-            noteBases["noteChar"] => base;
-        
+            modePattern.increment();
+            notePattern.increment();
+
+            modePattern.m_params.getInt("value") => int mode;
+            notePattern.m_params.getInt("value") => int base;
+
+            int frequency[m_n];
             createChord(base, mode, frequency.size()) @=> frequency;
 
-            0 => base;
-
             for (0 => int i; i < frequency.size(); i++)
-                m_params.setInt("freq" + i, frequency[i]);
+               m_params.setInt("freq" + i, frequency[i]);
 
             // wait
             duration => now;
-            posInProgression++;
+        }
+    }
+
+    fun void _sendFreqs()
+    {
+        /*
+        
+        modePattern.m_params.getInt("value") => int mode;
+        notePattern.m_params.getInt("value") => int base;
+
+        int frequency[m_n];
+        createChord(base, mode, frequency.size()) @=> frequency;
+
+        for (0 => int i; i < frequency.size(); i++)
+        {
+           m_params.setInt("freq" + i, frequency[i]);
+           //<<< i, frequency[i] >>>;
+        }
+        */
+    }
+
+    spork ~ _noteLoop();
+    fun void _noteLoop()
+    {
+        notePattern.m_params.getNewIntEvent("value") @=> IntEvent e;
+
+        while (1)
+        {
+            e => now;
+    
+            _sendFreqs();
+        }
+    }
+
+    spork ~ _modeLoop();
+    fun void _modeLoop()
+    {
+        modePattern.m_params.getNewIntEvent("value") @=> IntEvent e;
+
+        while (1)
+        {
+            e => now;
+    
+            _sendFreqs();
         }
     }
 }

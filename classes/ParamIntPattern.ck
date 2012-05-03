@@ -21,7 +21,8 @@ public class ParamIntPattern
         m_params.getNewIntEvent("index") @=> IntEvent e;
         while (1)
         {
-            m_params.setInt("value", m_pattern[e.i]);
+            if (m_pattern != NULL)
+                m_params.setInt("value", m_pattern[e.i]);
 
             e => now;
         }

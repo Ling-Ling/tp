@@ -149,11 +149,17 @@ public class OscFreqSend extends OscParamSend
         notePattern.init(noteProgression);
 
 
-        
-
-
         while (1)
         {
+            test();
+
+            // wait
+            duration => now;
+        }
+    }
+    fun void test()
+    {
+
             modePattern.increment();
             notePattern.increment();
 
@@ -165,10 +171,6 @@ public class OscFreqSend extends OscParamSend
 
             for (0 => int i; i < frequency.size(); i++)
                m_params.setInt("freq" + i, frequency[i]);
-
-            // wait
-            duration => now;
-        }
     }
 
     fun void _sendFreqs()

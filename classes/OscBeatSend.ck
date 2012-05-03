@@ -13,7 +13,7 @@ public class OscBeatSend extends OscParamSend
     m_params.setInt("ticksPerBeat", 4);
     m_params.setInt("bpm", 130);
 
-    m_params.setFloat("swing", .4);
+    m_params.setFloat("swing", .2);
 
     fun void beatLoopShred()
     {

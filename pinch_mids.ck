@@ -17,7 +17,7 @@ TrackPad.initTrackPads(tps);
 // osc slave
 OscParamRecv oscRecv;
 oscRecv.initPort(OSC_PORT);
-oscRecv.listenForInt("gain");
+oscRecv.listenForInt("pinchGain");
 
 for (0 => int i; i< numTrackPads; i++)
 {
@@ -31,7 +31,7 @@ for (0 => int i; i< numTrackPads; i++)
     spork ~ pp.m_params.bindIntShred("freq", oscRecv.m_params, "freq" + (startFreq + i));
 
     // map OSC gain
-    spork ~ pp.m_params.bindIntShred("gain", oscRecv.m_params, "gain");
+    spork ~ pp.m_params.bindIntShred("gain", oscRecv.m_params, "pinchGain");
 }
 
 // 24h

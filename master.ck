@@ -1,5 +1,5 @@
 //
-//  main.ck
+//  master.ck
 //
 // Ilias Karim
 // Stanford Laptop Orchestra (SLOrk)
@@ -14,7 +14,7 @@ TrackPad.initTrackPads(tps);
 
 
 //
-//  Pincher master
+//  Pinch master
 //
 
 // mode progression
@@ -57,22 +57,20 @@ spork ~ oscFreqSend.m_notePattern.m_params.bindIntToFloatShred("index", tps[0].m
 spork ~ oscFreqSend.m_modePattern.m_params.bindIntToFloatShred("index", tps[0].m_params, "x");
 
 // map TrackPad y to osc gain master
-spork ~ oscFreqSend.sendFloatShred("gain");
-spork ~ oscFreqSend.m_params.bindFloatShred("gain",tps[0].m_params,"y");
-
-// osc gain master
-//OscParamSend oscGainSend;
-//oscGainSend.initPort(OSC_PORT);
+spork ~ oscFreqSend.sendFloatShred("pinchGain");
+spork ~ oscFreqSend.m_params.bindFloatShred("pinchGain",tps[0].m_params,"y");
 
 
 //
 //  Beat Master 
 //
 
+/*
 // osc beat master
 OscBeatSend oscBeatSend;
 oscBeatSend.initPort(OSC_PORT);
 spork ~ oscBeatSend.beatLoopShred();
+*/
 
 // 24h
 1::day => now;

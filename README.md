@@ -44,3 +44,39 @@ OR
 ```
 killall chuck
 ```
+
+
+#Perform
+
+##Master
+
+```
+chuck --loop tp &
+chuck + master
+chuck + beat
+chuck + click
+```
+
+
+##Slave 1
+```
+chuck --loop tp &
+chuck + pinch_lows
+chuck + click
+```
+
+
+##Slave 2
+```
+chuck --loop tp &
+chuck + pinch_mids
+chuck + click
+```
+
+
+##Slave 3
+```
+chuck --loop tp &
+chuck + pinch_highs
+chuck + click
+```

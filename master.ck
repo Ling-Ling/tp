@@ -65,12 +65,67 @@ spork ~ oscFreqSend.m_params.bindFloatShred("pinchGain",tps[0].m_params,"y");
 //  Beat Master 
 //
 
-/*
 // osc beat master
 OscBeatSend oscBeatSend;
 oscBeatSend.initPort(OSC_PORT);
 spork ~ oscBeatSend.beatLoopShred();
-*/
+
+
+
+
+DrumPad dp;
+
+[ 
+ [1, 0, 0, 0, 0, 0, 0, 0, 
+  1, 0, 0, 0, 0, 0, 0, 0, 
+  1, 0, 0, 0, 0, 0, 0, 0, 
+  1, 0, 0, 0, 0, 0, 1, 0],
+
+ [1, 0, 0, 0, 1, 0, 0, 0, 
+  1, 0, 0, 0, 1, 0, 0, 0, 
+  1, 0, 0, 0, 1, 0, 0, 0, 
+  1, 0, 0, 0, 1, 0, 1, 0],
+
+ [1, 0, 1, 0, 1, 0, 0, 0, 
+  1, 0, 0, 0, 1, 0, 1, 0, 
+  1, 0, 1, 0, 1, 0, 0, 0, 
+  1, 0, 0, 0, 1, 0, 1, 0],
+
+ [1, 0, 1, 0, 1, 0, 1, 0,
+  1, 0, 1, 0, 1, 0, 1, 0,
+  1, 0, 1, 0, 1, 0, 1, 0,
+  0, 1, 0, 1, 0, 1, 0, 1]
+
+] @=> dp.m_patterns;
+
+["data/closehat.wav"] @=> dp.m_files;
+["data/hihat-open.wav"] @=> dp.m_mixFiles;
+
+
+OscParamRecv oscRecv;
+oscRecv.initPort(OSC_PORT);
+
+spork ~ dp.m_params.bindIntShred("beatNum", oscRecv.m_params, "beatNum");
+
+dp.m_params.setFloatRange("openness", 0, .5);
+spork ~ dp.m_params.bindFloatShred("openness", tps[1].m_params, "y");
+
+dp.m_params.setIntRange("pattern", 0, dp.m_patterns.size());
+spork ~ dp.m_params.bindIntToFloatShred("pattern", tps[1].m_params, "x");
+
+
+//
+// wub
+//
+
+Mouse.initMice(1) @=> Mouse @ mice[];
+
+Wub wub;
+
+spork ~ wub.m_params.bindIntShred("play", mice[0].m_params, "mouse_click");
+
+spork ~ wub.m_params.bindIntShred("midiNote", oscRecv.m_params, "freq0");
+
 
 // 24h
 1::day => now;

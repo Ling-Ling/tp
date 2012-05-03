@@ -94,8 +94,8 @@ public class XD
 
         Math.min(6, dac.channels()) $ int => int NUM_CHANNELS;
         for (0 => int i; i < NUM_CHANNELS; i++)
-            buf => g => dac(i);
-        s => g => dac.chan(i);
+            buf => g => dac.chan(i);
+
         file => buf.read;
         gain => g.gain;
         buf.length() => now;        

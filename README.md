@@ -53,8 +53,6 @@ killall chuck
 ```
 chuck --loop tp &
 chuck + master
-chuck + beat
-chuck + click
 ```
 
 

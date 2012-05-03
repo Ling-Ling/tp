@@ -49,7 +49,7 @@ TrackPad.initTrackPads(tps);
 OscFreqSend oscFreqSend;
 oscFreqSend.initPort(OSC_PORT);
 oscFreqSend.m_modePattern.initWithPattern(modeProgression);
-oscFreqSend.m_notePattern.init(noteProgression);
+oscFreqSend.m_notePattern.initWithPattern(noteProgression);
 spork ~ oscFreqSend.freqLoopShred(10);
 
 // map TrackPad x to Pincher pattern indices

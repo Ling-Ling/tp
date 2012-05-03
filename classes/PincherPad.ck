@@ -8,7 +8,12 @@
 
 public class PincherPad 
 {
-
+ 
+    //constants
+    .8 => float maxGain;
+    1000 => int intMultiplier;
+    
+    
     //
     //  Parameters
     // 
@@ -38,7 +43,7 @@ public class PincherPad
                 now + e.duration() => time later; //swoop for 1 second
                 //"manually" use changing envelope value to set freq
                 while (now < later) { 
-                    (e.value() $ float) / 1000 => s.gain;
+                    (e.value() $ float) / intMultiplier => s.gain;
                     s.gain() => s.vowel;
                     1::samp => now;
                 }
@@ -56,22 +61,22 @@ public class PincherPad
             event => now;
             now => lastTouch;
             m_params.getFloat("distance") => float dist;
-            (s.gain() * 1000) $ int => e.value;
-            if(dist > .9){
-                900 => e.target;
+            (s.gain() * intMultiplier) $ int => e.value;
+            if(dist > maxGain){
+                maxGain * intMultiplier => e.target;
             }else{
-                (dist * 1000) $ int => e.target;
+                (dist * intMultiplier) $ int => e.target;
             }
-            if(Std.fabs((e.target() / 1000) - s.gain()) > .2){
+            if(Std.fabs((e.target() / intMultiplier) - s.gain()) > .2){
                 now + e.duration() => time later; //swoop for 1 second
                 //"manually" use changing envelope value to set freq
                 while (now < later) { 
-                    (e.value() $ float) / 1000 => s.gain;
+                    (e.value() $ float) / intMultiplier => s.gain;
                     s.gain() => s.vowel;
                     1::samp => now;
                 }
             }else{
-                 (e.target() $ float) / 1000 => s.gain;
+                 (e.target() $ float) / intMultiplier => s.gain;
                 s.gain() => s.vowel;
             }
         }

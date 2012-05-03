@@ -25,7 +25,10 @@ public class PincherPad
     // floats
     m_params.setFloat("distance", 0.);
     m_params.setFloat("freq", 0.);
+    m_params.setFloat("gain", 1.);
     
+    spork ~ m_params.logFloatShred("gain");
+
     spork ~ _fadeOuter();
     fun void _fadeOuter(){
         while(1){
@@ -36,7 +39,7 @@ public class PincherPad
                 //"manually" use changing envelope value to set freq
                 while (now < later) { 
                     (e.value() $ float) / 1000 => s.gain;
-                    s.gain() => s.vowel;
+                    s.gain() * m_params.getFloat("gain") => s.vowel;
                     1::samp => now;
                 }
             }
@@ -53,23 +56,23 @@ public class PincherPad
             event => now;
             now => lastTouch;
             m_params.getFloat("distance") => float dist;
-            (s.gain() * 1000) $ int => e.value;
+            (s.gain() * 1000 * m_params.getFloat("gain")) $ int => e.value;
             if(dist > .9){
                 900 => e.target;
             }else{
                 (dist * 1000) $ int => e.target;
             }
-            if(Std.fabs((e.target() / 1000) - s.gain()) > .2){
+            if(Std.fabs((e.target() / 1000) - s.gain() * m_params.getFloat("gain")) > .2){
                 now + e.duration() => time later; //swoop for 1 second
                 //"manually" use changing envelope value to set freq
                 while (now < later) { 
                     (e.value() $ float) / 1000 => s.gain;
-                    s.gain() => s.vowel;
+                    s.gain() * m_params.getFloat("gain") => s.vowel;
                     1::samp => now;
                 }
             }else{
                 (e.target() $ float) / 1000 => s.gain;
-                s.gain() => s.vowel;
+                s.gain() * m_params.getFloat("gain") => s.vowel;
             }
         }
     }

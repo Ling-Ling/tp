@@ -91,8 +91,37 @@ public class OscFreqSend extends OscParamSend
     }
     
 
-    ParamIntPattern notePattern;
+    [
+     modes["major"],
+     modes["minor"],
+     modes["minor"],
+     modes["major"],
+     modes["major"],
+     modes["major"],
+     modes["minor"],
+     modes["dim"],
+     modes["major"]
+    ]
+    @=> int modeProgression[];
+
     ParamIntPattern modePattern;
+    modePattern.init(modeProgression);
+
+    [
+     keys["c"],
+     keys["e"],
+     keys["a"],
+     keys["g"],
+     keys["c"],
+     keys["f"],
+     keys["d"],
+     keys["b"],
+     keys["c"]
+    ] 
+    @=> int noteProgression[];
+
+    ParamIntPattern notePattern;
+    notePattern.init(noteProgression);
     
     0 => int m_n;
 
@@ -100,83 +129,15 @@ public class OscFreqSend extends OscParamSend
     {
         n => m_n;
 
-        spork ~ sendIntShred("freq1");
-        spork ~ sendIntShred("freq2");
-        spork ~ sendIntShred("freq3");
-        spork ~ sendIntShred("freq4");
-        spork ~ sendIntShred("freq5");
-        spork ~ sendIntShred("freq6");
-        spork ~ sendIntShred("freq7");
-        spork ~ sendIntShred("freq8");
-        spork ~ sendIntShred("freq9");
-        spork ~ sendIntShred("freq10");
+        for (0 => int i; i < n; i++)
+            spork ~ sendIntShred("freq" + i);
         
-        //-2 => int lowOctave;
-        //0 => int midOctave;
-        //1 => int highOctave;
-
-        [
-         modes["major"],
-         modes["minor"],
-         modes["minor"],
-         modes["major"],
-         modes["major"],
-         modes["major"],
-         modes["minor"],
-         modes["dim"],
-         modes["major"]
-        ]
-        @=> int modeProgression[];
-
-        modePattern.init(modeProgression);
-
-//        spork ~ modePattern.m_params.logIntShred("value");
-
-
-        [
-         keys["c"],
-         keys["e"],
-         keys["a"],
-         keys["g"],
-         keys["c"],
-         keys["f"],
-         keys["d"],
-         keys["b"],
-         keys["c"]
-        ] 
-        @=> int noteProgression[];
-
-        notePattern.init(noteProgression);
-
-
         while (1)
-        {
-            test();
-
-            // wait
-            duration => now;
-        }
-    }
-    fun void test()
-    {
-
-            modePattern.increment();
-            notePattern.increment();
-
-            modePattern.m_params.getInt("value") => int mode;
-            notePattern.m_params.getInt("value") => int base;
-
-            int frequency[m_n];
-            createChord(base, mode, frequency.size()) @=> frequency;
-
-            for (0 => int i; i < frequency.size(); i++)
-               m_params.setInt("freq" + i, frequency[i]);
+            1::day => now;
     }
 
     fun void _sendFreqs()
     {
-        /*
-        
         modePattern.m_params.getInt("value") => int mode;
         notePattern.m_params.getInt("value") => int base;
 
@@ -184,11 +145,9 @@ public class OscFreqSend extends OscParamSend
         createChord(base, mode, frequency.size()) @=> frequency;
 
         for (0 => int i; i < frequency.size(); i++)
-        {
            m_params.setInt("freq" + i, frequency[i]);
-           //<<< i, frequency[i] >>>;
-        }
-        */
+
+           duration => now;
     }
 
     spork ~ _noteLoop();
@@ -199,7 +158,6 @@ public class OscFreqSend extends OscParamSend
         while (1)
         {
             e => now;
-    
             _sendFreqs();
         }
     }
@@ -212,7 +170,6 @@ public class OscFreqSend extends OscParamSend
         while (1)
         {
             e => now;
-    
             _sendFreqs();
         }
     }

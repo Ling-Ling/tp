@@ -17,7 +17,7 @@ TrackPad.initTrackPads(tps);
 // osc slave
 OscParamRecv oscRecv;
 oscRecv.initPort(OSC_PORT);
-oscRecv.listenForInt("gain");
+oscRecv.listenForInt("freq");
 
 for (0 => int i; i< numTrackPads; i++)
 {

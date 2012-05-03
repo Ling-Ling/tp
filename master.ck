@@ -60,6 +60,10 @@ spork ~ oscFreqSend.m_modePattern.m_params.bindIntToFloatShred("index", tps[0].m
 spork ~ oscFreqSend.sendFloatShred("gain");
 spork ~ oscFreqSend.m_params.bindFloatShred("gain",tps[0].m_params,"y");
 
+// osc gain master
+//OscParamSend oscGainSend;
+//oscGainSend.initPort(OSC_PORT);
+
 
 //
 //  Beat Master 

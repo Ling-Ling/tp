@@ -6,31 +6,18 @@
 //
 
 
-//
-// random test code
-//
+ParamIntPattern pattern;
 
-fun static float debugMiceIndices()
+
+spork ~ pattern.m_params.logIntShred("value");
+
+
+pattern.init([10, 9]);
+
+
+while (1)
 {
-    for (0 => int i; i < MAX_NUM_TRACKPADS; i++)
-        spork ~ __debugMouseLoop(i);
+    1::second => now;
+    
+    pattern.increment();
 }
-
-fun static void __debugMouseLoop(int i)
-{
-    Hid hi;
-    HidMsg msg;
-    if (!hi.openMouse(i))
-        return;
-
-    while (1)
-    {
-        hi => now;
-        while (hi.recv(msg))
-            if (msg.isButtonDown())
-                <<< "Mouse", i, "click down" >>>;
-            else if (msg.isButtonUp())
-                <<< "Mouse", i, "click up" >>>;
-    }
-}
-

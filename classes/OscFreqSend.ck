@@ -8,9 +8,66 @@
 public class OscFreqSend extends OscParamSend
 {
     4::second => dur duration;
+    
+    [4, 3, 5] @=> int major[];
+    [3, 4, 5] @=> int minor[];
+    [3, 3, 6] @=> int dim[];
+    [4, 3, 4, 1] @=> int major7[];
+    [4, 3, 3, 2] @=> int dom[];
+    [3, 4, 3, 2] @=> int minor7[];
+    [3, 3, 4, 2] @=> int hdim[];
+    [3, 3, 3, 3] @=> int fdim[];
+
+    fun int[] createChord(int base, string mode, int n)
+    {
+        int frequency[n];
+
+        if (base != 0)
+        {
+            for (0 => int i; i < n; i++)
+            {
+                if (mode == "major") {
+                    base => frequency[i];
+                    base + major[i%3] => base;
+                }
+                if (mode == "minor") {
+                    base => frequency[i];
+                    base + minor[i%3] => base;
+                }
+                if (mode == "dim") {
+                    base => frequency[i];
+                    base + dim[i%3] => base;
+                }
+               if (mode == "major7") {
+                    base => frequency[i];
+                    base + major7[i%3] => base;
+                }
+                if (mode == "major77") {
+                    base => frequency[i];
+                    base + dom[i%3] => base;
+                }
+                if (mode == "min7") {
+                    base => frequency[i];
+                    base + minor7[i%3] => base;
+                }
+               if (mode == "dim7") {
+                    base => frequency[i];
+                    base + hdim[i%3] => base;
+                }
+                if (mode == "dim77") {
+                    base => frequency[i];
+                    base + fdim[i%3];
+                }
+            }
+        }
+
+        return frequency;
+    }
 
     fun void freqLoopShred()
     {
+        10 => int n;
+
         spork ~ sendIntShred("freq1");
         spork ~ sendIntShred("freq2");
         spork ~ sendIntShred("freq3");
@@ -26,105 +83,49 @@ public class OscFreqSend extends OscParamSend
         //0 => int midOctave;
         //1 => int highOctave;
 
-        [4, 3, 5] @=> int major[];
-        [3, 4, 5] @=> int minor[];
-        [3, 3, 6] @=> int dim[];
-        [4, 3, 4, 1] @=> int major7[];
-        [4, 3, 3, 2] @=> int dom[];
-        [3, 4, 3, 2] @=> int minor7[];
-        [3, 3, 4, 2] @=> int hdim[];
-        [3, 3, 3, 3] @=> int fdim[];
 
         string noteChar;
 
         ["major","minor","minor","major","major","major","minor","dim","major"] @=> string modeProgression[];
+
         ["c", "e", "a", "g", "c", "f", "d", "b", "c"] @=> string noteProgression[];
+
+        int noteBases[0];
+        48 => noteBases["c"];
+        49 => noteBases["c#"];
+        50 => noteBases["d"];
+        51 => noteBases["d#"];
+        52 => noteBases["e"];
+        53 => noteBases["f"];
+        54 => noteBases["f#"];
+        55 => noteBases["g"];
+        56 => noteBases["g#"];
+        57 => noteBases["a"];
+        58 => noteBases["a#"];
+        59 => noteBases["b"];
+
         0 => int posInProgression;
         //I iii vi V I IV ii vii I
         0 => int wait;
-        0 => int numWaves;
+        0 => int i;
         0 => int base;
         "major" => string mode;
 
-        int frequency[20];        
+        int frequency[n];        
 
-        while (1){
-
+        while (1)
+        {
             modeProgression[posInProgression%9] => mode;
             noteProgression[posInProgression%9] => noteChar;
                        
-            if (noteChar == "c") 48 => base;//frequency[channel][numWaves[channel]-1];
-            if (noteChar == "c#") 49 => base;//frequency[channel][numWaves[channel]-1];
-            if (noteChar == "d") 50 => base;//frequency[channel][numWaves[channel]-1];
-            if (noteChar == "d#") 51 => base;//frequency[channel][numWaves[channel]-1];
-            if (noteChar == "e") 52 => base;//frequency[channel][numWaves[channel]-1];
-            if (noteChar == "f") 53 => base;//frequency[channel][numWaves[channel]-1];
-            if (noteChar == "f#") 54 => base;//frequency[channel][numWaves[channel]-1];
-            if (noteChar == "g") 55 => base;//frequency[channel][numWaves[channel]-1];
-            if (noteChar == "g#") 56 => base;//frequency[channel][numWaves[channel]-1];
-            if (noteChar == "a") 57 => base;//frequency[channel][numWaves[channel]-1];
-            if (noteChar == "a#") 58 => base;//frequency[channel][numWaves[channel]-1];
-            if (noteChar == "b") 59 => base;//frequency[channel][numWaves[channel]-1];
+            noteBases["noteChar"] => base;
         
-        if (base != 0){
-            0 => numWaves;
-                for (0 => int i; i < 10; i++)
-                {
-                    //int mbase;
-                    //if (i < 4)
-                    //    base + (lowOctave*12) => mbase;
-                    //else if (i < 8)
-                    //    base + (midOctave*12) => mbase;
-                    //else if (i < 10)
-                    //    base + (highOctave*12) => mbase;
-                    
-                    if (mode == "major") {
-                        base => frequency[numWaves];
-                        base + major[i%3] => base;
-                    }
-                    if (mode == "minor") {
-                        base => frequency[numWaves];
-                        base + minor[i%3] => base;
-                    }
-                    if (mode == "dim") {
-                        base => frequency[numWaves];
-                        base + dim[i%3] => base;
-                    }
-                   if (mode == "major7") {
-                        base => frequency[numWaves];
-                        base + major7[i%3] => base;
-                    }
-                    if (mode == "major77") {
-                        base => frequency[numWaves];
-                        base + dom[i%3] => base;
-                    }
-                    if (mode == "min7") {
-                        base => frequency[numWaves];
-                        base + minor7[i%3] => base;
-                    }
-                   if (mode == "dim7") {
-                        base => frequency[numWaves];
-                        base + hdim[i%3] => base;
-                    }
-                    if (mode == "dim77") {
-                        base => frequency[numWaves];
-                        base + fdim[i%3];
-                    }
-                    numWaves++;
-                }
-            }
+            createChord(base, mode, frequency.size()) @=> frequency;
+
             0 => base;
 
-            m_params.setInt("freq1", frequency[0]);
-            m_params.setInt("freq2", frequency[1]);
-            m_params.setInt("freq3", frequency[2]);
-            m_params.setInt("freq4", frequency[3]);
-            m_params.setInt("freq5", frequency[4]);
-            m_params.setInt("freq6", frequency[5]);
-            m_params.setInt("freq7", frequency[6]);
-            m_params.setInt("freq8", frequency[7]);
-            m_params.setInt("freq9", frequency[8]);
-            m_params.setInt("freq10", frequency[9]);
+            for (0 => int i; i < frequency.size(); i++)
+                m_params.setInt("freq" + i, frequency[i]);
 
             // wait
             duration => now;

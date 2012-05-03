@@ -172,11 +172,17 @@ public class Parameters
 
     fun void setInt(string key, int i)
     {
+        if (m_iMins[key] != m_iMaxs[key])
+        {
+            i - m_iMins[key] => i;
+            i % m_iMaxs[key] => i;
+            i + m_iMins[key] => i;
+        }
+
         i => m_iValues[key];
 
         if (m_iEvents[key] == NULL)
             return;
-
 
         // signal all events
         m_iEvents[key] @=> IntEvent events[];

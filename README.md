@@ -51,30 +51,23 @@ killall chuck
 ##Master
 
 ```
-chuck --loop tp &
-chuck + master
+./l master
 ```
 
 
 ##Slave 1
 ```
-chuck --loop tp &
-chuck + pinch_lows
-chuck + click
+./l pinch_lows click
 ```
 
 
 ##Slave 2
 ```
-chuck --loop tp &
-chuck + pinch_mids
-chuck + click
+./l pinch_mids click
 ```
 
 
 ##Slave 3
 ```
-chuck --loop tp &
-chuck + pinch_highs
-chuck + click
+./l pinch_highs click
 ```

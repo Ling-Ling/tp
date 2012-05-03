@@ -11,8 +11,8 @@
 TrackPad @ tps[TrackPad.MAX_NUM_TRACKPADS];
 TrackPad.initTrackPads(tps);
 
-Mouse @ mice[tps.size()];
-Mouse.initMice(mice);
+//Mouse @ mice[tps.size()];
+//Mouse.initMice(mice);
 
 
 //
@@ -29,11 +29,12 @@ oscFreqSend.initPort(OSC_PORT);
 // send freq
 spork ~ oscFreqSend.freqLoopShred();
 
-OscGainSend oscGainSend;
+OscParamSend oscGainSend;
 oscGainSend.initPort(OSC_PORT);
-// send freq
-spork ~ oscGainSend.gainLoopShred();
 
+//master gain control
+spork ~ oscGainSend.sendFloatShred("gain");
+spork ~ oscGainSend.m_params.bindFloatShred("gain",tps[0].m_params,"y");
 spork ~ oscGainSend.m_params.logFloatShred("gain");
 
 

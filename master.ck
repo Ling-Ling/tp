@@ -9,7 +9,7 @@
 8000 => int OSC_PORT;
 
 // trackpads
-TrackPad @ tps[1];
+TrackPad @ tps[2];
 TrackPad.initTrackPads(tps);
 
 
@@ -19,29 +19,29 @@ TrackPad.initTrackPads(tps);
 
 // mode progression
 [
- XD.MODE("major"),
- XD.MODE("minor"),
- XD.MODE("minor"),
- XD.MODE("major"),
- XD.MODE("major"),
- XD.MODE("major"),
- XD.MODE("minor"),
- XD.MODE("dim"),
- XD.MODE("major")
+XD.MODE("major"),
+XD.MODE("minor"),
+XD.MODE("minor"),
+XD.MODE("major"),
+XD.MODE("major"),
+XD.MODE("major"),
+XD.MODE("minor"),
+XD.MODE("dim"),
+XD.MODE("major")
 ]
 @=> int modeProgression[];
 
 // note progresssion
 [
- XD.KEY("c"),
- XD.KEY("e"),
- XD.KEY("a"),
- XD.KEY("g"),
- XD.KEY("c"),
- XD.KEY("f"),
- XD.KEY("d"),
- XD.KEY("b"),
- XD.KEY("c")
+XD.KEY("c#"),
+XD.KEY("f"),
+XD.KEY("b"),
+XD.KEY("g#"),
+XD.KEY("c#"),
+XD.KEY("f#"),
+XD.KEY("d#"),
+XD.KEY("b"),
+XD.KEY("c#")
 ] 
 @=> int noteProgression[];
 
@@ -60,5 +60,7 @@ spork ~ oscFreqSend.m_modePattern.m_params.bindIntToFloatShred("index", tps[1].m
 spork ~ oscFreqSend.sendFloatShred("pinchGain");
 spork ~ oscFreqSend.m_params.bindFloatShred("pinchGain",tps[1].m_params,"y");
 
+
 // 24h
 1::day => now;
+

@@ -25,7 +25,9 @@ public class PincherPad
     now => time lastTouch;
 
     // floats
-    m_params.setFloat("distance", 0.);
+    m_params.setFloat("pinch_dist", 0.);
+    m_params.setFloat("flick_dist", 0.);
+    m_params.setFloat("tap", 0.);
     m_params.setInt("freq", 0);
     m_params.setFloat("gain", 0.);
     
@@ -54,7 +56,7 @@ public class PincherPad
     spork ~ _pinchLoop();
     fun void _pinchLoop()
     {
-        m_params.getNewFloatEvent("distance") @=> Event event;
+        m_params.getNewFloatEvent("pinch_dist") @=> Event event;
         Envelope e => blackhole;
         .5::second => e.duration;
         
@@ -62,7 +64,7 @@ public class PincherPad
         {
             event => now;
             now => lastTouch;
-            m_params.getFloat("distance") => float dist;
+            m_params.getFloat("pinch_dist") => float dist;
             s.gain() => e.value;
             if(dist > MAX_GAIN){
                 MAX_GAIN => e.target;
@@ -84,7 +86,75 @@ public class PincherPad
         }
     }
     
+
+    spork ~ _flickLoop();
+    fun void _flickLoop()
+    {
+        m_params.getNewFloatEvent("flick_dist") @=> Event event;
+        Envelope e => blackhole;
+        .5::second => e.duration;
+        
+        while (1)
+        {
+            event => now;
+            now => lastTouch;
+            m_params.getFloat("flick_dist") => float dist;
+            s.gain() => e.value;
+            if(dist > MAX_GAIN){
+                MAX_GAIN => e.target;
+            }else{
+                dist => e.target;
+            }
+            if(Std.fabs(e.target() - s.gain()) > .2){
+                now + e.duration() => time later; //swoop for 1 second
+                //"manually" use changing envelope value to set freq
+                while (now < later) { 
+                    e.value() => s.gain;
+                    s.gain() => s.vowel;
+                    1::samp => now;
+                }
+            }else{
+                e.target() => s.gain;
+                s.gain() => s.vowel;
+            }
+        }
+    }
+
     
+    spork ~ _tapLoop();
+    fun void _tapLoop()
+    {
+        m_params.getNewIntEvent("tap") @=> Event event;
+        Envelope e => blackhole;
+        .5::second => e.duration;
+        
+        while (1)
+        {
+            event => now;
+            now => lastTouch;
+            m_params.getInt("tap") => int dist;
+            s.gain() => e.value;
+            if(dist > MAX_GAIN){
+                MAX_GAIN => e.target;
+            }else{
+                dist => e.target;
+            }
+            if(Std.fabs(e.target() - s.gain()) > .2){
+                now + e.duration() => time later; //swoop for 1 second
+                //"manually" use changing envelope value to set freq
+                while (now < later) { 
+                    e.value() => s.gain;
+                    s.gain() => s.vowel;
+                    1::samp => now;
+                }
+            }else{
+                e.target() => s.gain;
+                s.gain() => s.vowel;
+            }
+        }
+    }
+
+
     spork ~ _freqLoop();
     fun void _freqLoop()
     {

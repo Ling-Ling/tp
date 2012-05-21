@@ -69,7 +69,7 @@ public class XD
             for (0 => int i; i < n; i++)
             {
                 base => frequency[i];
-                base + XD.MODE_OFFSETS(mode)[i % 3] => base;
+                base + 1/*XD.MODE_OFFSETS(mode)[i % 3]*/ => base;
             }
         }
 

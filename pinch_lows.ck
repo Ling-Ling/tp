@@ -27,7 +27,6 @@ for (0 => int i; i< numTrackPads; i++)
 
     // map trackpad pinch distance
     spork ~ pp.m_params.bindFloatShred("pinch_dist", tps[i+1].m_params, "pinch_distance");
-
     
     // map trackpad flick distance
     spork ~ pp.m_params.bindFloatShred("flick_dist", tps[i].m_params, "flick_distance");

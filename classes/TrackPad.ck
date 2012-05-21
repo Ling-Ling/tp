@@ -121,6 +121,8 @@ public class TrackPad
                     m_params.setFloat("touch" + (n - 1) + "y", m_msgs[n - 1].touchY); 
                     m_params.setFloat("touch" + (n - 1) + "size", m_msgs[n - 1].touchSize); 
 
+                    m_params.setFloat(""
+
                     if (!m_trackPad.recv(m_msgs[n]) || m_msgs[n].which == lastTouchNum)
                         break;
                     else 
@@ -129,8 +131,15 @@ public class TrackPad
 
                 m_params.setInt("num_touches", n);
                 
+                //flick or tap if one touch
+                if (n == 1) {
+                    if (m_msgs[0].deltaY > .2)
+                        m_params.setFloat("flick_distance", m_msgs[0].deltaX);
+                    else
+                        m_params.setInt("tap", 1);
+                }
                 // pinch distance between first two touches
-                if (n == 2)
+                else if (n == 2)
                     m_params.setFloat("pinch_distance", Math.sqrt(Math.pow(m_msgs[0].touchX - m_msgs[1].touchX, 2) + Math.pow(m_msgs[0].touchY - m_msgs[1].touchY, 2)));
                 else
                     m_params.setFloat("pinch_distance", 0.);

@@ -12,7 +12,7 @@
 public class PincherPad 
 {
  
-    bellsound bellSound;
+    //bellsound bellSound;
     //constants
     .8 => float MAX_GAIN;
     

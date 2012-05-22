@@ -121,7 +121,7 @@ public class TrackPad
                     m_params.setFloat("touch" + (n - 1) + "y", m_msgs[n - 1].touchY); 
                     m_params.setFloat("touch" + (n - 1) + "size", m_msgs[n - 1].touchSize); 
 
-                    m_params.setFloat(""
+                    m_params.setFloat("deltaX", m_msgs[n-1].deltaX);
 
                     if (!m_trackPad.recv(m_msgs[n]) || m_msgs[n].which == lastTouchNum)
                         break;

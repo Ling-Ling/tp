@@ -20,7 +20,7 @@ TrackPad.initTrackPads(tps);
 // mode progression
 [
 XD.MODE("major"),
-/*
+
 XD.MODE("minor"),
 XD.MODE("minor"),
 XD.MODE("major"),
@@ -29,14 +29,14 @@ XD.MODE("major"),
 XD.MODE("minor"),
 XD.MODE("dim"),
 XD.MODE("major")
-*/
+
 ]
 @=> int modeProgression[];
 
 // note progresssion
 [
 XD.KEY("c"),
-/*
+
 XD.KEY("a"),
 XD.KEY("f"),
 XD.KEY("g"),
@@ -45,7 +45,7 @@ XD.KEY("e"),
 XD.KEY("d"),
 XD.KEY("b"),
 XD.KEY("c")
-*/
+
 ] 
 @=> int noteProgression[];
 

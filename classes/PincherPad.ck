@@ -12,7 +12,6 @@ public class PincherPad
     //constants
     .8 => float MAX_GAIN;
     
-    
     //
     //  Parameters
     // 
@@ -125,21 +124,19 @@ public class PincherPad
     fun void _tapLoop()
     {
         m_params.getNewIntEvent("tap") @=> Event event;
-        Envelope e => blackhole;
-        .5::second => e.duration;
+        //Envelope e => blackhole;
+        //.5::second => e.duration;
         
         while (1)
         {
             event => now;
-            now => lastTouch;
-            m_params.getInt("tap") => int dist;
-            s.gain() => e.value;
-            if(dist > MAX_GAIN){
-                MAX_GAIN => e.target;
-            }else{
-                dist => e.target;
-            }
-            if(Std.fabs(e.target() - s.gain()) > .2){
+            //now => lastTouch;
+            m_params.getInt("tap") => int tap;
+            //s.gain() => e.value;
+            if(tap == 1){
+                bellsound.RingBell(m_params.freq);
+            
+            /*if(Std.fabs(e.target() - s.gain()) > .2){
                 now + e.duration() => time later; //swoop for 1 second
                 //"manually" use changing envelope value to set freq
                 while (now < later) { 
@@ -150,7 +147,7 @@ public class PincherPad
             }else{
                 e.target() => s.gain;
                 s.gain() => s.vowel;
-            }
+            }*/
         }
     }
 

@@ -29,7 +29,7 @@ just the gain but also the tone of the sound corresponding to each volume level,
 so for a simple bell hit sound, just set gain according to an exponential decay.
 Other effects are also possible. To change actual gain (master volume, or velocity)
 use SetMasterGain */
-class BellSound {
+public class BellSound {
     SinOsc harmonics[12];
     Gain harmEnv => LPF harmLPF => Gain master => NRev rev => dac;
     TriOsc hitMod => SinOsc hitCar => Gain hitEnv => HPF hitHPF => master;
@@ -103,7 +103,7 @@ fun int IsSpace(int key) {
 
 fun void KeyPress(int key) {
     if (IsSpace(key)) {
-        spork ~ RingBell(std.mtof(std.rand2(40, 80)));          
+        spork ~ RingBell(Std.mtof(Std.rand2(40, 80)));          
     }
 }                                              
 

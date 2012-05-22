@@ -5,10 +5,14 @@
 //  Stanford Laptop Orchestra (SLOrk)
 //
 
+//Machine.add("bellsound.ck");
+
+
 
 public class PincherPad 
 {
  
+    bellsound bellSound;
     //constants
     .8 => float MAX_GAIN;
     
@@ -134,8 +138,8 @@ public class PincherPad
             m_params.getInt("doesTap") => int tap;
             //s.gain() => e.value;
             if(tap == 1){
-                bellsound.RingBell(m_params.freq);
-            
+               // bellSound.RingBell(Std.mtof(60));//m_params.freq);
+            }
             /*if(Std.fabs(e.target() - s.gain()) > .2){
                 now + e.duration() => time later; //swoop for 1 second
                 //"manually" use changing envelope value to set freq

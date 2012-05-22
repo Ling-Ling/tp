@@ -40,7 +40,7 @@ public class TP
 
         //
         //  instruments
-
+        "bellsound.ck"
         "Wub.ck",
         "SampleSet.ck",
         "DrumPad.ck",

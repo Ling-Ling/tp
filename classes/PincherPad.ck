@@ -26,7 +26,7 @@ public class PincherPad
     // floats
     m_params.setFloat("pinch_dist", 0.);
     m_params.setFloat("flick_dist", 0.);
-    m_params.setFloat("tap", 0.);
+    m_params.setInt("tap", 0);
     m_params.setInt("freq", 0);
     m_params.setFloat("gain", 0.);
     

@@ -26,7 +26,7 @@ public class PincherPad
     // floats
     m_params.setFloat("pinch_dist", 0.);
     m_params.setFloat("flick_dist", 0.);
-    m_params.setInt("tap", 0);
+    m_params.setInt("doesTap", 0);
     m_params.setInt("freq", 0);
     m_params.setFloat("gain", 0.);
     
@@ -123,7 +123,7 @@ public class PincherPad
     spork ~ _tapLoop();
     fun void _tapLoop()
     {
-        m_params.getNewIntEvent("tap") @=> Event event;
+        m_params.getNewIntEvent("doesTap") @=> Event event;
         //Envelope e => blackhole;
         //.5::second => e.duration;
         
@@ -131,7 +131,7 @@ public class PincherPad
         {
             event => now;
             //now => lastTouch;
-            m_params.getInt("tap") => int tap;
+            m_params.getInt("doesTap") => int tap;
             //s.gain() => e.value;
             if(tap == 1){
                 bellsound.RingBell(m_params.freq);

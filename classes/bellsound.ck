@@ -89,10 +89,10 @@ calculated by ExpDecay shred). Other bell-playing effects can be created
 by ramping the gain value with SetGain in different ways (perhaps slow
 increase with then exponential decay, which might give a zing effect, or
 continually holding gain at a certain point for a continuous ring) */ 
-fun void RingBell(float freq) {
+fun void RingBell(/*float freq*/) {
     //SawSound s; // for debugging, also simple usage of interface used for BellSound
     BellSound s;
-    s.SetFreq(freq);
+    //s.SetFreq(freq);
     Gain g;
     spork ~ ExpDecay(g);
     while (g.gain() > 0) {
@@ -154,7 +154,7 @@ fun void KeyPress(int key) {
     if (IsSpace(key)) {
         BellSound bellSound;
         bellSound.SetGain(0);
-        spork ~ bellSound.RingBell(Std.mtof(Std.rand2(40, 80)));          
+        spork ~ bellSound.RingBell();//Std.mtof(Std.rand2(40, 80)));          
     }
 }                                              
 

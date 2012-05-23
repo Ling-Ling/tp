@@ -14,7 +14,7 @@ public class PincherPad
  
     BellSound bellSound;
     bellSound.SetGain(0);
-    50 => float bellFreq;
+//    50 => float bellFreq;
     //constants
     .8 => float MAX_GAIN;
     
@@ -144,7 +144,7 @@ public class PincherPad
 	    //<<<"tap", tap>>>;
             if(tap == 1){
                 <<<"tap==yes">>>;
-                spork ~ bellSound.RingBell(Std.mtof(bellFreq));
+                spork ~ bellSound.RingBell();//Std.mtof(bellFreq));
             }
             <<<bellSound.GetGain()>>>;
             if(bellSound.GetGain() > .05){
@@ -173,7 +173,8 @@ public class PincherPad
         {
             event => now;
             Std.mtof(m_params.getInt("freq")) => s.freq;
-        }
+            bellSound.SetFreq(Std.mtof(m_params.getInt("freq")));
+	}
     }
     
     spork ~ _gainLoop();

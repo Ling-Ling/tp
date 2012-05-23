@@ -56,45 +56,22 @@ killall chuck
 ```
 mkdir tp
 cd tp
-curl https://nodeload.github.com/iliaskarim/tp/zipball/master --O tp.zip
+curl https://nodeload.github.com/Ling-Ling/tp/zipball/master --O tp.zip
 unzip -j tp.zip
 rm tp.zip
 chmod 755 l
-./l master
+./l master_bell
 ```
 
 
-##Slave 1
+##Slave
 ```
 mkdir tp
 cd tp
-curl https://nodeload.github.com/iliaskarim/tp/zipball/master --O tp.zip
+curl https://nodeload.github.com/Ling-Ling/tp/zipball/master --O tp.zip
 unzip -j tp.zip
 rm tp.zip
-chmod 755 l
-./l pinch_lows click
-```
-
-
-##Slave 2
-```
-mkdir tp
-cd tp
-curl https://nodeload.github.com/iliaskarim/tp/zipball/master --O tp.zip
-unzip -j tp.zip
-rm tp.zip
-chmod 755 l
-./l pinch_mids click
-```
-
-
-##Slave 3
-```
-mkdir tp
-cd tp
-curl https://nodeload.github.com/iliaskarim/tp/zipball/master --O tp.zip
-unzip -j tp.zip
-rm tp.zip
-chmod 755 l
-./l pinch_highs click
+chmod 755 bell
+./bell $
+(where $ is the first letter of the name of the computer)
 ```

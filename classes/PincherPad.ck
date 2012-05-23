@@ -14,6 +14,7 @@ public class PincherPad
  
     BellSound bellSound;
     bellSound.SetGain(0);
+    
     //constants
     .8 => float MAX_GAIN;
     

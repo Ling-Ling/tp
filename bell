@@ -1,0 +1,14 @@
+killall chuck
+sleep 1
+chuck --loop TP.ck &
+sleep 1
+open "Cannon in C.pdf"
+chuck + pinch_bell.ck:$@
+sleep 1
+open /Applications/Utilities/Terminal.app/
+echo ""
+echo "----------------BELL CHOIR-------------"
+echo "You will be playing the note labeled $@"
+echo ""
+echo "------------------USAGE----------------"
+echo ""

@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <!-- charset must remain utf-8 to be handled properly by Processing -->
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+    <title>server : Built with Processing</title>
+
+    <style type="text/css">
+      /* <![CDATA[ */
+	
+	body {
+  	  margin: 60px 0px 0px 55px;
+	  font-family: verdana, geneva, arial, helvetica, sans-serif; 
+	  font-size: 11px; 
+	  background-color: #ddddcc; 
+	  text-decoration: none; 
+	  font-weight: normal; 
+	  line-height: normal; 
+	}
+		 
+	a          { color: #3399cc; }
+	a:link     { color: #3399cc; text-decoration: underline; }
+	a:visited  { color: #3399cc; text-decoration: underline; }
+	a:active   { color: #3399cc; text-decoration: underline; }
+	a:hover    { color: #3399cc; text-decoration: underline; }
+
+      /* ]]> */
+    </style>    
+  </head>
+
+  <body>
+    <div id="content">
+      <div id="server_container">
+
+	<!-- This version plays nicer with older browsers, 
+	     but requires JavaScript to be enabled. 
+	     http://java.sun.com/javase/6/docs/technotes/guides/jweb/deployment_advice.html
+	     http://download.oracle.com/javase/tutorial/deployment/deploymentInDepth/ -->
+	<script type="text/javascript"
+		src="http://www.java.com/js/deployJava.js"></script>
+	<script type="text/javascript">
+	  /* <![CDATA[ */
+
+	  var attributes = { 
+            code: 'server.class',
+            archive: 'server.jar,oscP5.jar,core.jar',
+            width: 1200, 
+            height: 700,
+          };
+          var parameters = { 
+            image: 'loading.gif',
+            centerimage: 'true',
+          };
+          var version = '1.5';
+          deployJava.runApplet(attributes, parameters, version);
+
+          /* ]]> */
+        </script>
+        
+	<noscript> <div>
+	  <!--[if !IE]> -->
+	  <object classid="java:server.class" 
+            	  type="application/x-java-applet"
+            	  archive="server.jar,oscP5.jar,core.jar"
+            	  width="1200" height="700"
+            	  standby="Loading Processing software..." >
+            
+	    <param name="archive" value="server.jar,oscP5.jar,core.jar" />
+	    
+	    <param name="mayscript" value="true" />
+	    <param name="scriptable" value="true" />
+	    
+	    <param name="image" value="loading.gif" />
+	    <param name="boxmessage" value="Loading Processing software..." />
+	    <param name="boxbgcolor" value="#FFFFFF" />
+	  <!--<![endif]-->
+
+	    <!-- For more instructions on deployment, 
+		 or to update the CAB file listed here, see:
+		 http://java.sun.com/javase/6/webnotes/family-clsid.html
+		 http://java.sun.com/javase/6/webnotes/install/jre/autodownload.html -->
+	    <object classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93"
+		    codebase="http://java.sun.com/update/1.6.0/jinstall-6u20-windows-i586.cab"
+		    width="1200" height="700"
+		    standby="Loading Processing software..."  >
+	      
+	      <param name="code" value="server" />
+	      <param name="archive" value="server.jar,oscP5.jar,core.jar" />
+	      
+	      <param name="mayscript" value="true" />
+	      <param name="scriptable" value="true" />
+	      
+	      <param name="image" value="loading.gif" />
+	      <param name="boxmessage" value="Loading Processing software..." />
+	      <param name="boxbgcolor" value="#FFFFFF" />
+	      
+	      <p>
+		<strong>
+		  This browser does not have a Java Plug-in.
+		  <br />
+		  <a href="http://www.java.com/getjava" title="Download Java Plug-in">
+		    Get the latest Java Plug-in here.
+		  </a>
+		</strong>
+	      </p>
+	      
+	    </object>
+	    
+	  <!--[if !IE]> -->
+	  </object>
+	  <!--<![endif]-->
+
+	</div> </noscript>
+
+      </div>
+      
+      <p>
+	
+ oscP5broadcaster by andreas schlegel
+ an osc broadcast server.
+ osc clients can connect to the server by sending a connect and
+ disconnect osc message as defined below to the server.
+ incoming messages at the server will then be broadcasted to
+ all connected clients. 
+ an example for a client is located in the oscP5broadcastClient exmaple.
+ oscP5 website at http://www.sojamo.de/oscP5
+/
+ 
+import oscP5.*;
+import netP5.*;
+
+OscP5 oscP5;
+NetAddressList myNetAddressList = new NetAddressList();
+/* listeningPort is the port the server is listening for incoming messages */
+int myListeningPort = 32000;
+/* the broadcast port is the port the clients should listen for incoming messages from the server*/
+int myBroadcastPort = 12000;
+
+String myConnectPattern = "/server/connect";
+String myDisconnectPattern = "/server/disconnect";
+  
+PFont f;  
+String numClientsStr = "No clients connected.";
+
+void setup() {
+  size(1200, 700);
+  oscP5 = new OscP5(this, myListeningPort);
+  frameRate(25);
+  f = loadFont("Monaco-40.vlw");
+}
+
+void draw() {
+  background(0);
+  textFont(f, 40);
+  fill(255);
+  text(numClientsStr, 20, 50);
+}
+
+void oscEvent(OscMessage theOscMessage) {
+  /* check if the address pattern fits any of our patterns */
+  if (theOscMessage.addrPattern().equals(myConnectPattern)) {
+    connect(theOscMessage.netAddress().address());
+  }
+  else if (theOscMessage.addrPattern().equals(myDisconnectPattern)) {
+    disconnect(theOscMessage.netAddress().address());
+  }
+  /**
+ if pattern matching was not successful, then broadcast the incoming
+ message to all addresses in the netAddresList. 
+   
+
+      </p>
+      
+      <p>
+	Source code: <a href="server.pde">server</a> 
+      </p>
+      
+      <p>
+	Built with <a href="http://processing.org" title="Processing.org">Processing</a>
+      </p>
+    </div>
+  </body>
+</html>

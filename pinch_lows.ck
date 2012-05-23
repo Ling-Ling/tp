@@ -29,10 +29,10 @@ for (0 => int i; i< numTrackPads; i++)
     spork ~ pp.m_params.bindFloatShred("pinch_dist", tps[i+1].m_params, "pinch_distance");
     
     // map trackpad flick distance
-    spork ~ pp.m_params.bindFloatShred("flick_dist", tps[i].m_params, "flick_distance");
+    spork ~ pp.m_params.bindFloatShred("flick_dist", tps[i+1].m_params, "flick_distance");
 
     // check if trackpad tapped
-    spork ~ pp.m_marams.bindIntShred("tap", tps[i].m_params, "tap");
+    spork ~ pp.m_params.bindIntShred("doesTap", tps[i+1].m_params, "tap");
 
 
     // map OSC freq

@@ -12,7 +12,8 @@
 public class PincherPad 
 {
  
-    bellsound bellSound;
+    BellSound bellSound;
+    bellSound.SetGain(0);
     //constants
     .8 => float MAX_GAIN;
     
@@ -34,9 +35,9 @@ public class PincherPad
     m_params.setInt("freq", 0);
     m_params.setFloat("gain", 0.);
     
-//    spork ~ m_params.logFloatShred("gain");
+    spork ~ m_params.logFloatShred("gain");
 
-    spork ~ _fadeOuter();
+    //spork ~ _fadeOuter();
     fun void _fadeOuter(){
         Envelope e => blackhole;
         .5::second => e.duration;
@@ -56,7 +57,7 @@ public class PincherPad
         }
     }
     
-    spork ~ _pinchLoop();
+    //spork ~ _pinchLoop();
     fun void _pinchLoop()
     {
         m_params.getNewFloatEvent("pinch_dist") @=> Event event;
@@ -127,31 +128,37 @@ public class PincherPad
     spork ~ _tapLoop();
     fun void _tapLoop()
     {
+        <<<"tap loop">>>;
         m_params.getNewIntEvent("doesTap") @=> Event event;
-        //Envelope e => blackhole;
-        //.5::second => e.duration;
+        Envelope e => blackhole;
+        .5::second => e.duration;
         
         while (1)
         {
+            //<<<"tap?">>>;
             event => now;
-            //now => lastTouch;
+            now => lastTouch;
             m_params.getInt("doesTap") => int tap;
             //s.gain() => e.value;
+	    //<<<"tap", tap>>>;
             if(tap == 1){
-               // bellSound.RingBell(Std.mtof(60));//m_params.freq);
+                <<<"tap==yes">>>;
+                spork ~ bellSound.RingBell(Std.mtof(60));
             }
-            /*if(Std.fabs(e.target() - s.gain()) > .2){
+            <<<bellSound.GetGain()>>>;
+            if(bellSound.GetGain() > .05){
+                <<<"?">>>;
                 now + e.duration() => time later; //swoop for 1 second
                 //"manually" use changing envelope value to set freq
                 while (now < later) { 
-                    e.value() => s.gain;
-                    s.gain() => s.vowel;
+                //    e.value() => s.gain;
+                  //  s.gain() => s.vowel;
                     1::samp => now;
                 }
             }else{
-                e.target() => s.gain;
-                s.gain() => s.vowel;
-            }*/
+                //e.target() => s.gain;
+                //s.gain() => s.vowel;
+            }
         }
     }
 

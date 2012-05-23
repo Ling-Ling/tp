@@ -78,7 +78,7 @@ public class TrackPad
     
     float m_AreaBetweenThreeOrMoreTouches;
     int m_nTouches;
-    
+    time lastTouch; 
 
     /**  
      *  Main touch loop initializer
@@ -104,8 +104,7 @@ public class TrackPad
     {
         while (1)
         {
-            m_trackPad => now;
-            
+            m_trackPad => now;            
             if (m_trackPad.recv(m_msgs[0]))
             {
                 int n;
@@ -130,16 +129,22 @@ public class TrackPad
                 }
 
                 m_params.setInt("num_touches", n);
-                
+                //<<<"about to enter num touches">>>;
                 //flick or tap if one touch
-                if (n == 1) {
-                    if (m_msgs[0].deltaY > .2)
+		if (n == 1) {
+                    //<<<"one touch">>>;
+                    if (m_msgs[0].deltaY > .2){
+                        //<<<"in trackpad flicking">>>;
                         m_params.setFloat("flick_distance", m_msgs[0].deltaX);
-                    else
-                        m_params.setInt("tap", 1);
-                }
+                    //    m_params.setInt("tap", 1);
+			//lastTouch - 2::second => lastTouch;
+		    }else{
+                        //<<<"in trackpad tapping">>>; 
+		        m_params.setInt("tap", 1);
+                    }
+		}
                 // pinch distance between first two touches
-                else if (n == 2)
+		if (n == 2)
                     m_params.setFloat("pinch_distance", Math.sqrt(Math.pow(m_msgs[0].touchX - m_msgs[1].touchX, 2) + Math.pow(m_msgs[0].touchY - m_msgs[1].touchY, 2)));
                 else
                     m_params.setFloat("pinch_distance", 0.);

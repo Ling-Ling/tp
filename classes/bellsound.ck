@@ -73,40 +73,13 @@ public class BellSound {
         MapValueClamp(gain, 0.1, 1, this.freq+300, 10000, 1) => harmLPF.freq;                          
     }
     
+    fun float GetGain() {
+        return master.gain();
+    }
+
     fun void SetMasterGain(float mastergain) {
         mastergain => master.gain;
     }
-}        
-                                        
-
-/// KEYBOARD WATCHER ///
-
-/* Keyboard watcher shred using Hid */
-fun void KeyboardWatcher() {
-    Hid hi;
-    HidMsg msg;
-    hi.openKeyboard(0);
-    while (true) {
-        hi => now;
-        while (hi.recv(msg)) {
-            if (msg.isButtonDown()) {
-                KeyPress(msg.ascii);
-            }
-        }
-    }
-}
-
-/* Returns true if key is the ascii value of spacebar */ 
-fun int IsSpace(int key) { 
-    return (key == 32);
-}
-
-fun void KeyPress(int key) {
-    if (IsSpace(key)) {
-        spork ~ RingBell(Std.mtof(Std.rand2(40, 80)));          
-    }
-}                                              
-
 
 /// BELL RINGING SHRED ///
 
@@ -138,6 +111,7 @@ fun void ExpDecay(Gain g) {
     while (true) {
         (now - startTime) / second => float t;
         Math.max(Math.exp(-1.8*t) - 0.01, 0) => g.gain;
+
         1::ms => now;
     }
 }
@@ -145,18 +119,49 @@ fun void ExpDecay(Gain g) {
 /* Maps an input value in a given range to a given output range, linearly
 interpolating if pow == 1, otherwise interpolating along curve x^pow when
 input range mapped to [0, 1] */
-fun float MapValueClamp(float in, float inMin, float inMax, float outMin, float outMax, float pow) {
-    (in - inMin) / (inMax - inMin) => float val;
-    if (val > 1) 1 => val;
-    else if (val < 0) 0 => val;
-    Math.pow(val, pow) => val;
-    return (val * (outMax - outMin)) + outMin;
+    fun float MapValueClamp(float in, float inMin, float inMax, float outMin, float outMax, float pow) {
+        (in - inMin) / (inMax - inMin) => float val;
+        if (val > 1) 1 => val;
+        else if (val < 0) 0 => val;
+        Math.pow(val, pow) => val;
+        return (val * (outMax - outMin)) + outMin;
+    }
 }
+                                       
+/// KEYBOARD WATCHER ///
+
+/* Keyboard watcher shred using Hid */
+fun void KeyboardWatcher() {
+    Hid hi;
+    HidMsg msg;
+    hi.openKeyboard(0);
+    while (true) {
+        hi => now;
+        while (hi.recv(msg)) {
+            if (msg.isButtonDown()) {
+                KeyPress(msg.ascii);
+            }
+        }
+    }
+}
+
+/* Returns true if key is the ascii value of spacebar */ 
+fun int IsSpace(int key) { 
+    return (key == 32);
+}
+
+fun void KeyPress(int key) {
+    if (IsSpace(key)) {
+        BellSound bellSound;
+        bellSound.SetGain(0);
+        spork ~ bellSound.RingBell(Std.mtof(Std.rand2(40, 80)));          
+    }
+}                                              
 
 
 /// PROGRAM EXECUTION ///
 
-spork ~ KeyboardWatcher();
+//spork ~ KeyboardWatcher();
 while (true) {
     1::second => now; 
 }

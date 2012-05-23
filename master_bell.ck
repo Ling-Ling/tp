@@ -1,21 +1,18 @@
 //
-//  master.ck
+//  master_bell.ck
 //
-// Ilias Karim
+// Jonathan Tilley
 // Stanford Laptop Orchestra (SLOrk)
 //
 
 
 8000 => int OSC_PORT;
-
-// trackpads
-TrackPad @ tps[2];
-TrackPad.initTrackPads(tps);
-
+16 => int nPlayers;
 
 //
-//  Pinch master
+//  Bell master
 //
+
 
 // mode progression
 [
@@ -36,7 +33,6 @@ XD.MODE("major")
 // note progresssion
 [
 XD.KEY("c"),
-
 XD.KEY("a"),
 XD.KEY("f"),
 XD.KEY("g"),
@@ -45,24 +41,15 @@ XD.KEY("e"),
 XD.KEY("d"),
 XD.KEY("b"),
 XD.KEY("c")
-
 ] 
 @=> int noteProgression[];
 
 // osc pincher frequency patterns master
-OscFreqSend oscFreqSend;
-oscFreqSend.initPort(OSC_PORT);
-oscFreqSend.m_modePattern.initWithPattern(modeProgression);
-oscFreqSend.m_notePattern.initWithPattern(noteProgression);
-spork ~ oscFreqSend.freqLoopShred(10);
-
-// map TrackPad x to Pincher pattern indices
-spork ~ oscFreqSend.m_notePattern.m_params.bindIntToFloatShred("index", tps[1].m_params, "x");
-spork ~ oscFreqSend.m_modePattern.m_params.bindIntToFloatShred("index", tps[1].m_params, "x");
-
-// map TrackPad y to osc pinch gain left
-spork ~ oscFreqSend.sendFloatShred("pinchGain");
-spork ~ oscFreqSend.m_params.bindFloatShred("pinchGain",tps[1].m_params,"y");
+OscScaleSend oscScaleSend;
+oscScaleSend.initPort(OSC_PORT);
+oscScaleSend.m_modePattern.initWithPattern(modeProgression);
+oscScaleSend.m_notePattern.initWithPattern(noteProgression);
+spork ~ oscScaleSend.freqLoopShred(nPlayers);
 
 
 // 24h

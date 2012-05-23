@@ -31,6 +31,7 @@ public class TP
         "OscParamSend.ck",
         "OscBeatSend.ck",
         "OscFreqSend",
+        "OscScaleSend",
 
         //
         //  interfaces

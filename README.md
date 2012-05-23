@@ -60,7 +60,7 @@ curl https://nodeload.github.com/Ling-Ling/tp/zipball/master --O tp.zip
 unzip -j tp.zip
 rm tp.zip
 chmod 755 l
-./l master_bells
+./l master_bell
 ```
 
 
@@ -71,7 +71,7 @@ cd tp
 curl https://nodeload.github.com/Ling-Ling/tp/zipball/master --O tp.zip
 unzip -j tp.zip
 rm tp.zip
-chmod 755 bells
-./bells $
+chmod 755 bell
+./bell $
 (where $ is the first letter of the name of the computer)
 ```

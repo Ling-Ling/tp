@@ -59,7 +59,7 @@ public class PincherPad
         }
     }
     
-    spork ~ _pinchLoop();
+    //spork ~ _pinchLoop();
     fun void _pinchLoop()
     {
         m_params.getNewFloatEvent("pinch_dist") @=> Event event;
@@ -137,7 +137,7 @@ public class PincherPad
         
         while (1)
         {
-            //<<<"tap?">>>;
+            <<<"tap?">>>;
             event => now;
             now => lastTouch;
             m_params.getInt("doesTap") => int tap;
@@ -145,7 +145,7 @@ public class PincherPad
 	    //<<<"tap", tap>>>;
             if(tap == 1){
                 <<<"tap==yes">>>;
-                spork ~ bellSound.RingBell();//Std.mtof(bellFreq));
+                spork ~ bellSound.RingBell(s.freq());//Std.mtof(bellFreq));
             }
             <<<bellSound.GetGain()>>>;
             if(bellSound.GetGain() > .05){

@@ -59,6 +59,23 @@ public class XD
 
         return _modeOffsets[i];
     }
+    
+    fun static int[] SCALE_MODE_OFFSETS(int i)
+    {
+        int _modeOffsets[8][7];
+        [2,2,1,2,2,2,1] @=> _modeOffsets[MODE("major")];
+        //fix these
+        [3, 4, 5, 0] @=> _modeOffsets[MODE("minor")]; 
+        [3, 3, 6, 0] @=> _modeOffsets[MODE("dim")];
+        [4, 3, 4, 1] @=> _modeOffsets[MODE("major7")];
+        [4, 3, 3, 2] @=> _modeOffsets[MODE("dom")];
+        [3, 4, 3, 2] @=> _modeOffsets[MODE("minor7")];
+        [3, 3, 4, 2] @=> _modeOffsets[MODE("hdim")];
+        [3, 3, 3, 3] @=> _modeOffsets[MODE("fdim")];
+        
+        return _modeOffsets[i];
+    }
+
 
     fun static int[] createChord(int base, int mode, int n)
     {
@@ -73,6 +90,22 @@ public class XD
             }
         }
 
+        return frequency;
+    }
+    
+    fun static int[] createScale(int base, int mode, int n)
+    {
+        int frequency[n];
+        
+        if (base != 0)
+        {
+            for (0 => int i; i < n; i++)
+            {
+                base => frequency[i];
+                base + XD.SCALE_MODE_OFFSETS(mode)[i % 7] => base;
+            }
+        }
+        
         return frequency;
     }
 

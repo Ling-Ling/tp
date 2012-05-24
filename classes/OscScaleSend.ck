@@ -36,11 +36,11 @@ public class OscScaleSend extends OscParamSend
 
         //major
         0 => int mode;
-        //c
-        0 => int base;
+        //middle c
+        60 => int base;
 
         int frequency[m_nFreq];
-        XD.createChord(base, mode, frequency.size()) @=> frequency;
+        XD.createScale(base, mode, frequency.size()) @=> frequency;
 
        for (0 => int i; i < frequency.size(); i++){
            m_params.setInt("freq" + alphabet[i], frequency[i]);

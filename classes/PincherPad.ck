@@ -25,7 +25,8 @@ public class PincherPad
     Parameters m_params;
 
     //units
-    FMVoices s => Gain g => dac;
+    //FMVoices
+    SinOsc s => Gain g => dac;
     0.0=>s.gain;
     now => time lastTouch;
 
@@ -38,7 +39,7 @@ public class PincherPad
     
     spork ~ m_params.logFloatShred("gain");
 
-    //spork ~ _fadeOuter();
+    spork ~ _fadeOuter();
     fun void _fadeOuter(){
         Envelope e => blackhole;
         .5::second => e.duration;
@@ -51,14 +52,14 @@ public class PincherPad
                 //"manually" use changing envelope value to set freq
                 while (now < later) { 
                     e.value() => s.gain;
-                    s.gain() => s.vowel;
+                    //s.gain() => s.vowel;
                     1::samp => now;
                 }
             }
         }
     }
     
-    //spork ~ _pinchLoop();
+    spork ~ _pinchLoop();
     fun void _pinchLoop()
     {
         m_params.getNewFloatEvent("pinch_dist") @=> Event event;
@@ -81,12 +82,12 @@ public class PincherPad
                 //"manually" use changing envelope value to set freq
                 while (now < later) { 
                     e.value() => s.gain;
-                    s.gain() => s.vowel;
+                    //s.gain() => s.vowel;
                     1::samp => now;
                 }
             }else{
                  e.target() => s.gain;
-                s.gain() => s.vowel;
+                //s.gain() => s.vowel;
             }
         }
     }
@@ -115,12 +116,12 @@ public class PincherPad
                 //"manually" use changing envelope value to set freq
                 while (now < later) { 
                     e.value() => s.gain;
-                    s.gain() => s.vowel;
+                    //s.gain() => s.vowel;
                     1::samp => now;
                 }
             }else{
                 e.target() => s.gain;
-                s.gain() => s.vowel;
+                //s.gain() => s.vowel;
             }
         }
     }

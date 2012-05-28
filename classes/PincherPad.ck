@@ -30,14 +30,15 @@ public class PincherPad
     0.0=>s.gain;
     now => time lastTouch;
 
-    // floats
+    // params
     m_params.setFloat("pinch_dist", 0.);
     m_params.setFloat("flick_dist", 0.);
     m_params.setInt("doesTap", 0);
     m_params.setInt("freq", 0);
     m_params.setFloat("gain", 0.);
+    m_params.setFloat("size", 0.);
     
-    spork ~ m_params.logFloatShred("gain");
+    //spork ~ m_params.logFloatShred("gain");
 
     spork ~ _fadeOuter();
     fun void _fadeOuter(){
@@ -137,19 +138,19 @@ public class PincherPad
         
         while (1)
         {
-            <<<"tap?">>>;
+            //<<<"tap?">>>;
             event => now;
             now => lastTouch;
             m_params.getInt("doesTap") => int tap;
             //s.gain() => e.value;
 	    //<<<"tap", tap>>>;
             if(tap == 1){
-                <<<"tap==yes">>>;
+                //<<<"tap==yes">>>;
                 spork ~ bellSound.RingBell(s.freq());//Std.mtof(bellFreq));
             }
-            <<<bellSound.GetGain()>>>;
+            //<<<bellSound.GetGain()>>>;
             if(bellSound.GetGain() > .05){
-                <<<"?">>>;
+                //<<<"?">>>;
                 now + e.duration() => time later; //swoop for 1 second
                 //"manually" use changing envelope value to set freq
                 while (now < later) { 
@@ -164,6 +165,17 @@ public class PincherPad
         }
     }
 
+    spork ~ _onReleaseLoop();
+    fun void _onReleaseLoop()
+    {
+        m_params.getNewIntEvent("onRelease") @=> Event event;
+    
+        while (1)
+        {
+           event => now;
+           <<<"released">>>;
+        }
+    }
 
     spork ~ _freqLoop();
     fun void _freqLoop()
@@ -175,7 +187,7 @@ public class PincherPad
             event => now;
             Std.mtof(m_params.getInt("freq")) => s.freq;
             bellSound.SetFreq(Std.mtof(m_params.getInt("freq")));
-	}
+        }
     }
     
     spork ~ _gainLoop();

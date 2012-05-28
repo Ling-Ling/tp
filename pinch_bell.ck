@@ -33,6 +33,9 @@ oscRecv.listenForInt("pinchGain");
     // check if trackpad tapped
     spork ~ pp.m_params.bindIntShred("doesTap", tps[curTP].m_params, "tap");
 
+    // watch for touch release
+    spork ~ pp.m_params.bindIntShred("onRelease", tps[curTP].m_params, "onRelease");
+
     // map OSC freq
     oscRecv.listenForInt("freq" + startFreq);
     spork ~ pp.m_params.bindIntShred("freq", oscRecv.m_params, "freq" + startFreq);

@@ -29,7 +29,7 @@ String beatStr = "Not counting/sending beats.";
 int beatNumber = 0;
 boolean runningBeats = false;
 
-int beatLengthMillis = 1500;
+int beatLengthMillis = 400;
 int curMillis, prevMillis = 0;
 int curTime = 0;
 
@@ -51,7 +51,7 @@ void draw() {
   }
   text(beatStr, 20, 100);
   
-  if (curTime < 60) {
+  if (curTime < 40) {
     fill(255);
   } else {
     fill(40);

@@ -18,10 +18,19 @@ int curMillis = 0, prevMillis = 0;
 int curTime = 0;
 
 int beatNumber = 0;
+int beatLengthMillis = 0;
 PFont f;
 
 String connectedStr = "Not connected.";
 String beatStr = "On beat 0.";
+boolean running = false;
+
+int scrollSpeed = 200; // in pixels per second
+int hitX = 180;
+int opticalIllusionCorrection = 8;
+
+int playerNumber = 9;
+int[] notes;
 
 void setup() {
   size(1200,700);
@@ -39,43 +48,90 @@ void setup() {
   /* the address of the osc broadcast server */
   myBroadcastLocation = new NetAddress("127.0.0.1",32000);
   f = loadFont("Monaco-40.vlw");
+  
+  // open data file
+  String[] lines;
+  lines = loadStrings("idea03parts.txt");
+  String[] notesStr = split(lines[9], ' ');
+  notes = new int[notesStr.length];
+  for (int i = 0; i < notesStr.length; i++) {
+     notes[i] = int(notesStr[i]);
+  }
 }
 
 
 void draw() {
   background(0);
   textFont(f, 40);
+  noStroke();
   fill(255);
   text(connectedStr, 20, 50);
-  beatStr = "On beat " + beatNumber + ".";
-  text(beatStr, 20, 100);
   
-  if (curTime < 60) {
+  if (curTime < 40 && running) {
     fill(255);
   } else {
     fill(40);
   }
   ellipse(1120, 80, 110, 110);
   
-  curMillis = millis();
-  curTime += curMillis - prevMillis;
-  prevMillis = curMillis;
+  if (running) {
+    beatStr = "On beat " + beatNumber + ".";
+    fill(255);
+    text(beatStr, 20, 100);
+    
+    for (int x = (int) (hitX - (scrollSpeed * curTime / 1000.0)
+                             - 5 * (scrollSpeed * beatLengthMillis / 1000.0))
+                             + opticalIllusionCorrection; 
+          x < 1300; 
+          x += scrollSpeed * beatLengthMillis / 1000.0) {
+      drawTick(x);
+    }
+    drawHitCircle(curTime < 40);
+    drawNotes(curTime);
+    
+    curMillis = millis();
+    curTime += curMillis - prevMillis;
+    prevMillis = curMillis;
+  }
 }
 
+void drawTick(int x) {
+  stroke(100);
+  strokeCap(SQUARE);
+  strokeWeight(8);
+  line(x, 340, x, 460);
+}
 
-void mousePressed() {
-  /* create a new OscMessage with an address pattern, in this case /test. */
-  OscMessage myOscMessage = new OscMessage("/test");
-  /* add a value (an integer) to the OscMessage */
-  myOscMessage.add(100);
-  /* send the OscMessage to a remote location specified in myNetAddress */
-  oscP5.send(myOscMessage, myBroadcastLocation);
+void drawHitCircle(boolean lightUp) {
+  if (lightUp) {
+    noFill();
+    stroke(200);
+    strokeWeight(10);
+    ellipse(hitX, 400, 80, 80);
+  }
+  fill(200);
+  noStroke();
+  triangle(hitX - 20, 300, hitX + 20, 300, hitX, 330);
+  triangle(hitX - 20, 500, hitX + 20, 500, hitX, 470);
+}
+
+void drawNotes(int curTime) {
+  fill(255);
+  noStroke();
+  for (int i = 0; i < notes.length; i++) {
+    int noteX = (int) ((notes[i] - beatNumber)
+      * (scrollSpeed * beatLengthMillis / 1000.0) 
+      - (scrollSpeed * curTime / 1000.0) + hitX)
+      + opticalIllusionCorrection;
+    if (noteX > -200 && noteX < 1400) {
+      ellipse(noteX, 400, 55, 55);
+    }
+  }
 }
 
 void stop() {
   disconnect();
 }
-  
 
 void keyPressed() {
   switch(key) {
@@ -113,7 +169,9 @@ void oscEvent(OscMessage theOscMessage) {
   theOscMessage.print();*/
   if (theOscMessage.addrPattern().equals("/beat")) {
     println("received beat");
+    running = true;
     beatNumber = theOscMessage.get(0).intValue();
+    beatLengthMillis = theOscMessage.get(1).intValue();
     curTime = 0;
   }
 }

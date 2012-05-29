@@ -1,3 +1,25 @@
+import processing.core.*; 
+import processing.xml.*; 
+
+import oscP5.*; 
+import netP5.*; 
+
+import java.applet.*; 
+import java.awt.Dimension; 
+import java.awt.Frame; 
+import java.awt.event.MouseEvent; 
+import java.awt.event.KeyEvent; 
+import java.awt.event.FocusEvent; 
+import java.awt.Image; 
+import java.io.*; 
+import java.net.*; 
+import java.text.*; 
+import java.util.*; 
+import java.util.zip.*; 
+import java.util.regex.*; 
+
+public class client extends PApplet {
+
 /**
  * oscP5broadcastClient by andreas schlegel
  * an osc broadcast client.
@@ -5,8 +27,8 @@
  * oscP5 website at http://www.sojamo.de/oscP5
  */
 
-import oscP5.*;
-import netP5.*;
+
+
 
 static String[] args;
 
@@ -33,7 +55,7 @@ int opticalIllusionCorrection = 8;
 int playerNumber = 9;
 int[] notes;
 
-void setup() {
+public void setup() {
   size(1200,700);
   frameRate(60);
   
@@ -56,7 +78,7 @@ void setup() {
   String[] notesStr = split(lines[9], ' ');
   notes = new int[notesStr.length];
   for (int i = 0; i < notesStr.length; i++) {
-     notes[i] = int(notesStr[i]);
+     notes[i] = PApplet.parseInt(notesStr[i]);
   }
   String[] args;
   args = loadStrings("args");
@@ -66,7 +88,7 @@ void setup() {
 }
 
 
-void draw() {
+public void draw() {
   background(0);
   textFont(f, 40);
   noStroke();
@@ -85,11 +107,11 @@ void draw() {
     fill(255);
     text(beatStr, 20, 100);
     
-    for (int x = (int) (hitX - (scrollSpeed * curTime / 1000.0)
-                             - 5 * (scrollSpeed * beatLengthMillis / 1000.0))
+    for (int x = (int) (hitX - (scrollSpeed * curTime / 1000.0f)
+                             - 5 * (scrollSpeed * beatLengthMillis / 1000.0f))
                              + opticalIllusionCorrection; 
           x < 1300; 
-          x += scrollSpeed * beatLengthMillis / 1000.0) {
+          x += scrollSpeed * beatLengthMillis / 1000.0f) {
       drawTick(x);
     }
     drawHitCircle(curTime < 40);
@@ -101,14 +123,14 @@ void draw() {
   }
 }
 
-void drawTick(int x) {
+public void drawTick(int x) {
   stroke(100);
   strokeCap(SQUARE);
   strokeWeight(8);
   line(x, 340, x, 460);
 }
 
-void drawHitCircle(boolean lightUp) {
+public void drawHitCircle(boolean lightUp) {
   if (lightUp) {
     noFill();
     stroke(200);
@@ -121,13 +143,13 @@ void drawHitCircle(boolean lightUp) {
   triangle(hitX - 20, 500, hitX + 20, 500, hitX, 470);
 }
 
-void drawNotes(int curTime) {
+public void drawNotes(int curTime) {
   fill(255);
   noStroke();
   for (int i = 0; i < notes.length; i++) {
     int noteX = (int) ((notes[i] - beatNumber)
-      * (scrollSpeed * beatLengthMillis / 1000.0) 
-      - (scrollSpeed * curTime / 1000.0) + hitX)
+      * (scrollSpeed * beatLengthMillis / 1000.0f) 
+      - (scrollSpeed * curTime / 1000.0f) + hitX)
       + opticalIllusionCorrection;
     if (noteX > -200 && noteX < 1400) {
       ellipse(noteX, 400, 55, 55);
@@ -135,11 +157,11 @@ void drawNotes(int curTime) {
   }
 }
 
-void stop() {
+public void stop() {
   disconnect();
 }
 
-void keyPressed() {
+public void keyPressed() {
   switch(key) {
     case('c'):
       /* connect to the broadcaster */
@@ -153,14 +175,14 @@ void keyPressed() {
   }  
 }
 
-void connect() {
+public void connect() {
   OscMessage m;
   m = new OscMessage("/server/connect",new Object[0]);
   oscP5.flush(m,myBroadcastLocation);  
   connectedStr = "Connected.";
 }
 
-void disconnect() {
+public void disconnect() {
   OscMessage m;
   m = new OscMessage("/server/disconnect",new Object[0]);
   oscP5.flush(m,myBroadcastLocation);  
@@ -169,7 +191,7 @@ void disconnect() {
 
 
 /* incoming osc message are forwarded to the oscEvent method. */
-void oscEvent(OscMessage theOscMessage) {
+public void oscEvent(OscMessage theOscMessage) {
   /* get and print the address pattern and the typetag of the received OscMessage */
   /*println("### received an osc message with addrpattern "+theOscMessage.addrPattern()+" and typetag "+theOscMessage.typetag());
   theOscMessage.print();*/
@@ -179,5 +201,9 @@ void oscEvent(OscMessage theOscMessage) {
     beatNumber = theOscMessage.get(0).intValue();
     beatLengthMillis = theOscMessage.get(1).intValue();
     curTime = 0;
+  }
+}
+  static public void main(String args[]) {
+    PApplet.main(new String[] { "--bgcolor=#FFFFFF", "client" });
   }
 }

@@ -5,7 +5,7 @@
 // Stanford Laptop Orchestra (SLOrk)
 //
 
-0 => int curTP;
+1 => int curTP;
 
 me.arg( 0 ) => string startFreq;
 <<<startFreq>>>;

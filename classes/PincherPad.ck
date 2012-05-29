@@ -143,7 +143,6 @@ public class PincherPad
             now => lastTouch;
             m_params.getInt("doesTap") => int tap;
             //s.gain() => e.value;
-	    //<<<"tap", tap>>>;
             if(tap == 1){
                 //<<<"tap==yes">>>;
                 spork ~ bellSound.RingBell(s.freq());//Std.mtof(bellFreq));
@@ -185,8 +184,11 @@ public class PincherPad
         while (1)
         {
             event => now;
-            Std.mtof(m_params.getInt("freq")) => s.freq;
-            bellSound.SetFreq(Std.mtof(m_params.getInt("freq")));
+            m_params.getInt("freq")=>int freq;
+            Std.mtof(freq) => s.freq;
+            //<<<Std.mtof(m_params.getInt("freq"))>>>;
+            <<<freq>>>;
+            bellSound.SetFreq(Std.mtof(freq));
         }
     }
     

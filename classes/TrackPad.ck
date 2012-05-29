@@ -104,7 +104,7 @@ public class TrackPad
     {
         while (1)
         {
-            m_trackPad => now;            
+            m_trackPad => now;
             if (m_trackPad.recv(m_msgs[0]))
             {
                 int n;
@@ -141,7 +141,7 @@ public class TrackPad
                     if (m_msgs[0].deltaY > .2){
                         //<<<"in trackpad flicking">>>;
                         m_params.setFloat("flick_distance", m_msgs[0].deltaX);
-                    //    m_params.setInt("tap", 1);
+                        m_params.setInt("tap", 1);
 			//lastTouch - 2::second => lastTouch;
 		    }else{
                         //<<<"in trackpad tapping">>>; 

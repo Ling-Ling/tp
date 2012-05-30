@@ -15,4 +15,3 @@ echo $@ > args
 ./timeserver/client/application.linux/client
 rm args
 killall chuck
-

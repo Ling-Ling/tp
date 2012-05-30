@@ -29,7 +29,7 @@ String beatStr = "Not counting/sending beats.";
 int beatNumber = 0;
 boolean runningBeats = false;
 
-int beatLengthMillis = 400;
+int beatLengthMillis = 450;
 int curMillis, prevMillis = 0;
 int curTime = 0;
 

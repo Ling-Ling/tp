@@ -37,7 +37,8 @@ public class PincherPad
     m_params.setInt("freq", 0);
     m_params.setFloat("gain", 0.);
     m_params.setFloat("size", 0.);
-    
+    m_params.setFloat("tilt_dist", 0.); 
+ 
     //spork ~ m_params.logFloatShred("gain");
 
     spork ~ _fadeOuter();
@@ -59,6 +60,30 @@ public class PincherPad
             }
         }
     }
+    spork ~ _tiltLoop();
+    fun void _tiltLoop()
+    {
+	m_params.getNewIntEvent("tilt_dist") @=> Event event;
+	Envelope e => blackhole;
+	.5::second => e.duration;
+
+	while(1)
+	{
+	    event => now;
+	    now => lastTouch;
+	    m_params.getInt("tilt_dist") => int tilt;
+	    if (tilt == 1) {
+		spork ~ bellSound.RingBell(s.freq());
+	    }
+	    if (bellSound.GetGain() > .05) {
+		now + e.duration() => time later;
+		while (now < later) {
+		    1::samp => now;
+		}
+	    }
+	}      
+    }
+
     
     //spork ~ _pinchLoop();
     fun void _pinchLoop()

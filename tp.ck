@@ -47,7 +47,9 @@ public class TP
         "DrumPad.ck",
 
         // vox 
+	"Tilter.ck",
         "PincherPad.ck"
+
     ] 
     @=> string _depencies[];
 

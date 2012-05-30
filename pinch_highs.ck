@@ -19,6 +19,9 @@ OscParamRecv oscRecv;
 oscRecv.initPort(OSC_PORT);
 oscRecv.listenForInt("pinchGain");
 
+Tilter til;
+til.initTilter();
+
 for (0 => int i; i< numTrackPads; i++)
 {
     PincherPad pp;
@@ -26,6 +29,8 @@ for (0 => int i; i< numTrackPads; i++)
     // map trackpad pinch distance
     spork ~ pp.m_params.bindFloatShred("pinch_dist", tps[i+1].m_params, "pinch_distance");
 
+    // map tilt distance
+    spork ~ pp.m_params.bindIntShred("tilt_dist", til.m_params, "tilt"); 
     
     // map trackpad flick distance
     spork ~ pp.m_params.bindFloatShred("flick_dist", tps[i+1].m_params, "flick_distance");

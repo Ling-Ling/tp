@@ -26,9 +26,9 @@ String connectedStr = "Not connected.";
 String beatStr = "On beat 0.";
 boolean running = false;
 
-int scrollSpeed = 200; // in pixels per second
+int scrollSpeed = 180; // in pixels per second
 int hitX = 180;
-int opticalIllusionCorrection = 8;
+int opticalIllusionCorrection = 6;
 
 int playerNumber = 9;
 int[] notes;
@@ -53,16 +53,16 @@ void setup() {
   // open data file
   String[] lines;
   lines = loadStrings("idea03parts.txt");
-  String[] notesStr = split(lines[9], ' ');
-  notes = new int[notesStr.length];
-  for (int i = 0; i < notesStr.length; i++) {
-     notes[i] = int(notesStr[i]);
-  }
   String[] args;
   args = loadStrings("args");
   playerNumber = args[0].charAt(0) - 'a' ;
   connectedStr = "Not connected.  Player " + (char)('a'+playerNumber);
-
+  
+  String[] notesStr = split(lines[playerNumber], ' ');
+  notes = new int[notesStr.length];
+  for (int i = 0; i < notesStr.length; i++) {
+     notes[i] = int(notesStr[i]);
+  }
 }
 
 

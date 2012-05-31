@@ -63,7 +63,7 @@ public class XD
     fun static int[] SCALE_MODE_OFFSETS(int i)
     {
         int _modeOffsets[8][7];
-        [2,2,1,2,2,2,1] @=> _modeOffsets[MODE("major")];
+        [2,2,2,2,1,2,1] @=> _modeOffsets[MODE("major")];
         //fix these
         [3, 4, 5, 0] @=> _modeOffsets[MODE("minor")]; 
         [3, 3, 6, 0] @=> _modeOffsets[MODE("dim")];

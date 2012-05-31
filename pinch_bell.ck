@@ -5,7 +5,7 @@
 // Stanford Laptop Orchestra (SLOrk)
 //
 
-1 => int curTP;
+0 => int curTP;
 
 me.arg( 0 ) => string startFreq;
 <<<startFreq>>>;
@@ -31,7 +31,7 @@ oscRecv.listenForInt("pinchGain");
     spork ~ pp.m_params.bindFloatShred("flick_dist", tps[curTP].m_params, "flick_distance");
 
     // check if trackpad tapped
-    spork ~ pp.m_params.bindIntShred("doesTap", tps[curTP].m_params, "tap");
+    spork ~ pp.m_params.bindIntShred("doesTap", tps[curTP].m_params, "onTouch");
 
     // watch for touch release
     spork ~ pp.m_params.bindIntShred("onRelease", tps[curTP].m_params, "onRelease");

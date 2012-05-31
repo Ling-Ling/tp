@@ -99,6 +99,9 @@ public class TrackPad
         return this;
     }
 
+
+    false => int touchIsDown;
+
     /**  Main track pad touch loop */
     fun void __trackPadTouchLoop()
     {
@@ -117,9 +120,14 @@ public class TrackPad
                   
                     m_params.setFloat("size", m_msgs[n - 1].touchSize); 
                     
-                    if(m_msgs[n - 1].touchSize == 0.0)
-                        m_params.setInt("onRelease", 0); 
-
+                    if(m_msgs[n - 1].touchSize == 0.0){
+                        false => touchIsDown;
+                        m_params.setInt("onRelease", 0);
+                    }else{
+                        if(!touchIsDown)
+                            m_params.setInt("onTouch", 1);
+                        true => touchIsDown;
+                    }
 
                     m_params.setFloat("touch" + (n - 1) + "x", m_msgs[n - 1].touchX); 
                     m_params.setFloat("touch" + (n - 1) + "y", m_msgs[n - 1].touchY); 

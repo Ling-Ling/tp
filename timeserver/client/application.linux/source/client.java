@@ -69,7 +69,7 @@ public void setup() {
    */
   
   /* the address of the osc broadcast server */
-  myBroadcastLocation = new NetAddress("127.0.0.1",32000);
+  myBroadcastLocation = new NetAddress("224.0.0.1",32000);
   f = loadFont("Monaco-40.vlw");
   
   // open data file

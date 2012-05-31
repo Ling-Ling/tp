@@ -197,7 +197,7 @@ public class PincherPad
         while (1)
         {
            event => now;
-           <<<"released">>>;
+           //<<<"released">>>;
         }
     }
 

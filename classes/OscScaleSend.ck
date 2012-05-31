@@ -34,10 +34,10 @@ public class OscScaleSend extends OscParamSend
         //m_modePattern.m_params.getInt("value") => int mode;
         //m_notePattern.m_params.getInt("value") => int base;
 
-        //major
+        //first scale type
         0 => int mode;
-        //middle c
-        60 => int base;
+        //start note
+        53 => int base;
 
         int frequency[m_nFreq];
         XD.createScale(base, mode, frequency.size()) @=> frequency;

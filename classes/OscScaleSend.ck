@@ -6,15 +6,14 @@
 //
 
 
-public class OscScaleSend extends OscParamSend
+public class OscScaleAndBeatSend extends OscParamSend
 {
     ParamIntPattern m_notePattern;
     ParamIntPattern m_modePattern;
     ["a","b","c", "d","e","f","g","h","i","j","k","l","m",
     "n","o","p","q","r","s","t","u","v","w","x","y","z"]
     @=>string alphabet[];
-
-    
+        
     0 => int m_nFreq;
 
     fun void freqLoopShred(int nFreq)
@@ -83,4 +82,71 @@ public class OscScaleSend extends OscParamSend
             _sendFreqs();
         }
     }
+    
+    
+    ///////////////////
+    ////   Beats   ////
+    ///////////////////
+
+    0 => int curBeat;
+    false => int shouldSendBeats;
+    450 => int milliBeats;
+    
+    
+    fun void handleKeyboard(){
+        // the device number to open
+        0 => int deviceNum;
+        
+        // instantiate a HidIn object
+        HidIn hi;
+        // structure to hold HID messages
+        HidMsg msg;
+        
+        // open keyboard
+        if( !hi.openKeyboard( deviceNum ) ) me.exit();
+        // successful! print name of device
+        <<< "keyboard '", hi.name(), "' ready" >>>;
+        
+        // infinite event loop
+        while( true )
+        {
+            // wait on event
+            hi => now;
+            
+            // get one or more messages
+            while( hi.recv( msg ) )
+            {
+                // check for action type
+                if( msg.isButtonDown() )
+                {
+                    msg.which => int char;
+                 <<<char>>>;
+                 if(char == 44) //space
+                     !shouldSendBeats => shouldSendBeats;
+                 else if(char == 21) //r
+                     0 => curBeat;
+             }
+            }
+        }
+    }
+    
+    fun void sendBeats(){
+        spork ~ sendIntShred("beat");
+        spork ~ sendIntShred("duration");
+        spork ~ _beatLoop();
+    }
+    
+    fun void _beatLoop()
+    {  
+        while (1)
+        {
+            milliBeats::ms => now;
+            <<<"beat ", curBeat>>>;
+            m_params.setInt("beat",curBeat);
+            m_params.setInt("duration",milliBeats);
+            if(shouldSendBeats)
+                curBeat++;
+        }
+    }
+
 }

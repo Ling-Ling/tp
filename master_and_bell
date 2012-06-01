@@ -5,6 +5,8 @@ sleep 1
 chuck + master_bell.ck
 sleep 1
 chuck + pinch_bell.ck:$@
+sleep 1
+chuck + kb2.ck
 echo ""
 echo "----------------BELL CHOIR-------------"
 echo "You will be playing the note labeled $@"
@@ -13,9 +15,7 @@ echo "------------------USAGE----------------"
 echo ""
 echo "Tap to play. follow the guide on screen for when."
 echo $@ > args
-./timeserver/client/application.linux/client &
-sleep 1
-./timeserver/server/application.linux/server
+./timeserver/client/application.linux/client 
 rm args
 killall chuck
 

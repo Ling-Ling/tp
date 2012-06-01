@@ -40,7 +40,7 @@ void setup() {
   /* create a new instance of oscP5. 
    * 12000 is the port number you are listening for incoming osc messages.
    */
-  oscP5 = new OscP5(this,12000);
+  oscP5 = new OscP5(this,8000);
   
   /* create a new NetAddress. a NetAddress is used when sending osc messages
    * with the oscP5.send method.
@@ -171,13 +171,16 @@ void disconnect() {
 /* incoming osc message are forwarded to the oscEvent method. */
 void oscEvent(OscMessage theOscMessage) {
   /* get and print the address pattern and the typetag of the received OscMessage */
-  /*println("### received an osc message with addrpattern "+theOscMessage.addrPattern()+" and typetag "+theOscMessage.typetag());
+ /*8 println("### received an osc message with addrpattern "+theOscMessage.addrPattern()+" and typetag "+theOscMessage.typetag());
   theOscMessage.print();*/
   if (theOscMessage.addrPattern().equals("/beat")) {
     println("received beat");
     running = true;
     beatNumber = theOscMessage.get(0).intValue();
-    beatLengthMillis = theOscMessage.get(1).intValue();
     curTime = 0;
   }
+  else if (theOscMessage.addrPattern().equals("/duration")) {
+    beatLengthMillis = theOscMessage.get(0).intValue();
+  }
+  
 }

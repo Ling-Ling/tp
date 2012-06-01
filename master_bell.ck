@@ -45,13 +45,12 @@ XD.KEY("c")
 @=> int noteProgression[];
 
 // osc pincher frequency patterns master
-OscScaleSend oscScaleSend;
-oscScaleSend.initPort(OSC_PORT);
-oscScaleSend.m_modePattern.initWithPattern(modeProgression);
-oscScaleSend.m_notePattern.initWithPattern(noteProgression);
-spork ~ oscScaleSend.freqLoopShred(nPlayers);
+OscScaleAndBeatSend oscSend;
+oscSend.initPort(OSC_PORT);
+oscSend.m_modePattern.initWithPattern(modeProgression);
+oscSend.m_notePattern.initWithPattern(noteProgression);
+spork ~ oscSend.freqLoopShred(nPlayers);
+oscSend.sendBeats();
+spork ~ oscSend.handleKeyboard();
 
-
-// 24h
 1::day => now;
-

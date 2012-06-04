@@ -32,10 +32,10 @@ til.initTilter();
     spork ~ pp.m_params.bindIntShred("tilt_dist", til.m_params, "tilt"); 
     
     // map trackpad flick distance
-    spork ~ pp.m_params.bindFloatShred("flick_dist", tps[curTP].m_params, "flick_distance");
+    spork ~ pp.m_params.bindFloatShred("bow_height", tps[curTP].m_params, "onTouch");
 
     // check if trackpad tapped
-    spork ~ pp.m_params.bindFloatShred("doesTap", tps[curTP].m_params, "onTouch");
+    spork ~ pp.m_params.bindFloatShred("doesTap", tps[curTP].m_params, "tap");
 
     // watch for touch release
     spork ~ pp.m_params.bindIntShred("onRelease", tps[curTP].m_params, "onRelease");

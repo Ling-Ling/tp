@@ -32,7 +32,7 @@ public class PincherPad
 
     // params
     m_params.setFloat("pinch_dist", 0.);
-    m_params.setFloat("flick_dist", 0.);
+    m_params.setFloat("bow_height", 0.);
     m_params.setFloat("doesTap", 0.);
     m_params.setInt("freq", 0);
     m_params.setFloat("gain", 0.);
@@ -119,10 +119,10 @@ public class PincherPad
     }
     
 
-    spork ~ _flickLoop();
-    fun void _flickLoop()
+    spork ~ _tapLoop();
+    fun void _tapLoop()
     {
-        m_params.getNewFloatEvent("flick_dist") @=> Event event;
+        m_params.getNewFloatEvent("doesTap") @=> Event event;
         Envelope e => blackhole;
         .5::second => e.duration;
         
@@ -130,48 +130,42 @@ public class PincherPad
         {
             event => now;
             now => lastTouch;
-            m_params.getFloat("flick_dist") => float dist;
-            s.gain() => e.value;
-            if(dist > MAX_GAIN){
-                MAX_GAIN => e.target;
-            }else{
-                dist => e.target;
+            m_params.getFloat("doesTap") => float tap;
+            
+            <<<"tap">>>;
+            if (tap > 0) {
+                spork ~ bellSound.RingBell(s.freq(), tap/2);
             }
-            if(Std.fabs(e.target() - s.gain()) > .2){
+            if(bellSound.GetGain() > .1) {//Std.fabs(e.target() - s.gain()) > .2){
                 now + e.duration() => time later; //swoop for 1 second
                 //"manually" use changing envelope value to set freq
                 while (now < later) { 
-                    e.value() => s.gain;
-                    //s.gain() => s.vowel;
                     1::samp => now;
                 }
-            }else{
-                e.target() => s.gain;
-                //s.gain() => s.vowel;
             }
         }
     }
 
     
-    spork ~ _tapLoop();
-    fun void _tapLoop()
+    spork ~ _bowLoop();
+    fun void _bowLoop()
     {
         <<<"tap loop">>>;
-        m_params.getNewFloatEvent("doesTap") @=> Event event;
+        m_params.getNewFloatEvent("bow_height") @=> Event event;
         Envelope e => dac;
         .5::second => e.duration;
         float lastFreq;
         
         while (1)
         {
-            //<<<"tap?">>>;
+            <<<"bow">>>;
             event => now;
             now => lastTouch;
-            m_params.getFloat("doesTap") => float tap;
+            m_params.getFloat("bow_height") => float bow;
             bellSound.GetGain() => e.value;
-            if (tap > 0){
-                    bellSound.SetGain(tap/2);
-                    tap/2 => lastFreq;
+            if (bow > 0){
+                    bellSound.SetGain(bow/2);
+                    bow/2 => lastFreq;
                 //tap => e.target;//Std.mtof(bellFreq));
             } else {
                 spork ~ bellSound.RingBell(s.freq(), lastFreq);

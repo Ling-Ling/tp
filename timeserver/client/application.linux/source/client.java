@@ -74,7 +74,7 @@ public void setup() {
   
   // open data file
   String[] lines;
-  lines = loadStrings("idea03parts.txt");
+  lines = loadStrings("final01parts.txt");
   String[] args;
   args = loadStrings("args");
   playerNumber = args[0].charAt(0) - 'a' ;
@@ -116,6 +116,7 @@ public void draw() {
     }
     drawHitCircle(curTime < 40);
     drawNotes(curTime);
+    drawLongNotes(curTime);
     
     curMillis = millis();
     curTime += curMillis - prevMillis;
@@ -155,6 +156,33 @@ public void drawNotes(int curTime) {
       ellipse(noteX, 400, 55, 55);
     }
   }
+}
+
+public void drawLongNotes(int curTime) {
+  int startBeat, endBeat;
+  if (playerNumber == 13) { // long D in 2nd section
+    startBeat = 112;
+    endBeat = 197;
+  } else if (playerNumber == 3 || playerNumber == 4) { // D and C# 3rd section
+    startBeat = 208;
+    endBeat = 293;
+  } else {
+    return;
+  }
+  endBeat--;
+  stroke(255);
+  noFill();
+  strokeWeight(55);
+  strokeCap(ROUND);
+  int startX = (int) ((startBeat - beatNumber)
+      * (scrollSpeed * beatLengthMillis / 1000.0f) 
+      - (scrollSpeed * curTime / 1000.0f) + hitX)
+      + opticalIllusionCorrection;
+  int endX = (int) ((endBeat - beatNumber)
+      * (scrollSpeed * beatLengthMillis / 1000.0f) 
+      - (scrollSpeed * curTime / 1000.0f) + hitX)
+      + opticalIllusionCorrection;
+  line(startX, 400, endX, 400);
 }
 
 public void stop() {

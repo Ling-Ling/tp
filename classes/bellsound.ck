@@ -31,7 +31,10 @@ Other effects are also possible. To change actual gain (master volume, or veloci
 use SetMasterGain */
 public class BellSound {
     SinOsc harmonics[12];
-    Gain harmEnv => LPF harmLPF => Gain master => NRev rev => dac;
+    Gain harmEnv => LPF harmLPF => Gain master => NRev rev;
+    for (0 => int i; i < dac.channels(); i++) {
+        rev => dac.chan(i);
+    }
     TriOsc hitMod => SinOsc hitCar => Gain hitEnv => HPF hitHPF => master;
     
     0.1 => master.gain;

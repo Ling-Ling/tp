@@ -98,8 +98,10 @@ public class TrackPad
 
         return this;
     }
-
-
+    
+    0.0 => float lastTouchSize;
+    now => time firstTouch;
+    now => lastTouch;
     false => int touchIsDown;
 
     /**  Main track pad touch loop */
@@ -120,14 +122,7 @@ public class TrackPad
                   
                     m_params.setFloat("size", m_msgs[n - 1].touchSize); 
                     
-                    if(m_msgs[n - 1].touchSize == 0.0){
-                        false => touchIsDown;
-                        m_params.setInt("onRelease", 0);
-                    }else{
-                        if(!touchIsDown)
-                            m_params.setInt("onTouch", 1);
-                        true => touchIsDown;
-                    }
+                    
 
                     m_params.setFloat("touch" + (n - 1) + "x", m_msgs[n - 1].touchX); 
                     m_params.setFloat("touch" + (n - 1) + "y", m_msgs[n - 1].touchY); 
@@ -140,7 +135,31 @@ public class TrackPad
                     else 
                         m_msgs[n].which => lastTouchNum;
                 }
-
+                <<<"touch y ", m_msgs[n-1].touchSize>>>;
+                    
+                if(m_msgs[0].touchSize == 0.0){
+                    if (now - lastTouch < 50::ms) {
+                        false => touchIsDown;
+                        m_params.setFloat("tap", m_msgs[0].touchY);
+                    }
+                    else {
+                        m_params.setFloat("tap", 0.);
+                    }
+                    m_params.setFloat("onTouch", 0.);
+                    m_msgs[0].touchSize => lastTouchSize;
+                }else{
+                    now => lastTouch;
+                    m_params.setFloat("tap", 0.);
+                    if (lastTouchSize == 0.0) {
+                        now => firstTouch;
+                    }
+                    if (now - firstTouch > 50::ms) {
+                        m_params.setFloat("onTouch", m_msgs[0].touchY);
+                        true => touchIsDown;
+                    }
+                    m_msgs[0].touchSize => lastTouchSize;
+                }
+                
                 m_params.setInt("num_touches", n);
                 //<<<"about to enter num touches">>>;
                 //flick or tap if one touch
@@ -149,11 +168,11 @@ public class TrackPad
                     if (m_msgs[0].deltaY > .2){
                         //<<<"in trackpad flicking">>>;
                         m_params.setFloat("flick_distance", m_msgs[0].deltaX);
-                        m_params.setInt("tap", 1);
+                        //m_params.setFloat("tap", m_msgs[0].touchY);
 			//lastTouch - 2::second => lastTouch;
 		    }else{
                         //<<<"in trackpad tapping">>>; 
-		        m_params.setInt("tap", 1);
+		        //m_params.setFloat("tap", m_msgs[0].touchY);
                     }
 		}
                 // pinch distance between first two touches

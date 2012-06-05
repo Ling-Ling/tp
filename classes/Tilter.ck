@@ -27,7 +27,7 @@ public class Tilter
 
 	while(1)
 	{
-	    <<<"tilt x ", m_msg.x, " tilt y ", m_msg.y>>>;
+	    //<<<"tilt x ", m_msg.x, " tilt y ", m_msg.y>>>;
 	    100::ms => now;
 	    m_hid.read(9,0,m_msg);
 	    if (m_msg.x + m_msg.y > threshold) {

@@ -8,8 +8,8 @@
 0 => int curTP;
 
 me.arg( 0 ) => string startFreq;
-<<<startFreq>>>;
-8000 => int OSC_PORT;
+//<<<startFreq>>>;
+8001 => int OSC_PORT;
 
 // trackpads
 TrackPad @ tps[TrackPad.MAX_NUM_TRACKPADS];

@@ -6,49 +6,37 @@
 //
 
 
-8000 => int OSC_PORT;
-16 => int nPlayers;
-
 //
 //  Bell master
 //
 
 
-// mode progression
+8000 => int OSC_PORT;
+16 => int nPlayers;
+
+// note progression
 [
-XD.MODE("major"),
-
-XD.MODE("minor"),
-XD.MODE("minor"),
-XD.MODE("major"),
-XD.MODE("major"),
-XD.MODE("major"),
-XD.MODE("minor"),
-XD.MODE("dim"),
-XD.MODE("major")
-
+ [52, 53, 55, 57, 59, 61, 62, 64, 65, 67, 69, 71, 73, 74, 76, 77],
+[55, 57, 59, 61, 62, 64, 65, 67, 69, 71, 73, 74, 76, 77, 79, 81],
+ [43, 50, 67, 69, 71, 73, 74, 76, 77, 79, 81, 83, 85, 86, 88, 89]
 ]
-@=> int modeProgression[];
+@=> int frequencySets[][];
 
-// note progresssion
+// timing
 [
-XD.KEY("c"),
-XD.KEY("a"),
-XD.KEY("f"),
-XD.KEY("g"),
-XD.KEY("c"),
-XD.KEY("e"),
-XD.KEY("d"),
-XD.KEY("b"),
-XD.KEY("c")
+0,
+209,
+477
 ] 
-@=> int noteProgression[];
+@=> int frequencyChangeLocations[];
 
 // osc pincher frequency patterns master
 OscScaleAndBeatSend oscSend;
-oscSend.initPort(OSC_PORT);
-oscSend.m_modePattern.initWithPattern(modeProgression);
-oscSend.m_notePattern.initWithPattern(noteProgression);
+oscSend.beatSendingPort(OSC_PORT);
+oscSend.scaleSendingPort(OSC_PORT + 1);
+oscSend.setFrequencySets(frequencySets);
+oscSend.setFrequencyChangeLocations(frequencyChangeLocations);
+
 spork ~ oscSend.freqLoopShred(nPlayers);
 oscSend.sendBeats();
 spork ~ oscSend.handleKeyboard();

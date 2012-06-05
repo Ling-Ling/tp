@@ -8,20 +8,41 @@
 
 public class OscScaleAndBeatSend extends OscParamSend
 {
-    ParamIntPattern m_notePattern;
-    ParamIntPattern m_modePattern;
+    int frequencySets[][];
+    int frequencyChangeLocations[];
+    0 => int curFrequencySet;
+    
+    0 => int curBeat;
+    false => int shouldSendBeats;
+    450 => int milliBeats;
+    
     ["a","b","c", "d","e","f","g","h","i","j","k","l","m",
     "n","o","p","q","r","s","t","u","v","w","x","y","z"]
     @=>string alphabet[];
-        
-    0 => int m_nFreq;
+
+    ///////////////////
+    ////   Freqs   ////
+    ///////////////////
+    
+    OscParamSend freqSender;
+    
+    fun void scaleSendingPort(int port){
+        freqSender.initPort(port);
+    }
+    
+    fun void setFrequencySets(int fsets[][]){
+        fsets @=> frequencySets;
+    }
+    
+    fun void setFrequencyChangeLocations(int flocs[]){
+        flocs @=> frequencyChangeLocations;
+    }
 
     fun void freqLoopShred(int nFreq)
     {
-        nFreq => m_nFreq;
 
         for (0 => int i; i < nFreq; i++)
-            spork ~ sendIntShred("freq" + alphabet[i]);
+            spork ~ freqSender.sendIntShred("freq" + alphabet[i]);
         
         while (1)
             1::day => now;
@@ -29,69 +50,39 @@ public class OscScaleAndBeatSend extends OscParamSend
 
     fun void _sendFreqs()
     {
-        //change back for this to be dynamic
-        //m_modePattern.m_params.getInt("value") => int mode;
-        //m_notePattern.m_params.getInt("value") => int base;
+        false => int shouldSend;
+        for (0 => int i; i < frequencyChangeLocations.size(); i++){
+            if(curBeat == frequencyChangeLocations[i]){
+                i => curFrequencySet;
+                true => shouldSend;
+            }
+        }
 
-        //first scale type
-        0 => int mode;
-        //start note
-        53 => int base;
-
-        int frequency[m_nFreq];
-        XD.createScale(base, mode, frequency.size()) @=> frequency;
-
-       for (0 => int i; i < frequency.size(); i++){
-           m_params.setInt("freq" + alphabet[i], frequency[i]);
+       if(shouldSend){
+          for (0 => int i; i < frequencySets[curFrequencySet].size(); i++){
+               freqSender.m_params.setInt("freq" + alphabet[i], frequencySets[curFrequencySet][i]);
+           }
        }
-       //<<<"sent",frequency.size(), "frequencies">>>;
     }
 
-    //remove this when chord change is controlled
     spork ~ _repeaterLoop();
     fun void _repeaterLoop()
     {  
         while (1)
         {
-            1::second => now;
+            milliBeats::ms => now;
             _sendFreqs();
         }
     }
-    //
-    
-    spork ~ _noteLoop();
-    fun void _noteLoop()
-    {
-        m_notePattern.m_params.getNewIntEvent("value") @=> IntEvent e;
-
-        while (1)
-        {
-            e => now;
-            _sendFreqs();
-        }
-    }
-
-    spork ~ _modeLoop();
-    fun void _modeLoop()
-    {
-        m_modePattern.m_params.getNewIntEvent("value") @=> IntEvent e;
-
-        while (1)
-        {
-            e => now;
-            _sendFreqs();
-        }
-    }
-    
     
     ///////////////////
     ////   Beats   ////
     ///////////////////
-
-    0 => int curBeat;
-    false => int shouldSendBeats;
-    450 => int milliBeats;
+    OscParamSend beatSender;
     
+    fun void beatSendingPort(int port){
+        beatSender.initPort(port);
+    }
     
     fun void handleKeyboard(){
         // the device number to open
@@ -120,7 +111,6 @@ public class OscScaleAndBeatSend extends OscParamSend
                 if( msg.isButtonDown() )
                 {
                     msg.which => int char;
-                 <<<char>>>;
                  if(char == 44) //space
                      !shouldSendBeats => shouldSendBeats;
                  else if(char == 21) //r
@@ -131,8 +121,8 @@ public class OscScaleAndBeatSend extends OscParamSend
     }
     
     fun void sendBeats(){
-        spork ~ sendIntShred("beat");
-        spork ~ sendIntShred("duration");
+        spork ~ beatSender.sendIntShred("beat");
+        spork ~ beatSender.sendIntShred("duration");
         spork ~ _beatLoop();
     }
     
@@ -142,8 +132,8 @@ public class OscScaleAndBeatSend extends OscParamSend
         {
             milliBeats::ms => now;
             <<<"beat ", curBeat>>>;
-            m_params.setInt("beat",curBeat);
-            m_params.setInt("duration",milliBeats);
+            beatSender.m_params.setInt("beat",curBeat);
+            beatSender.m_params.setInt("duration",milliBeats);
             if(shouldSendBeats)
                 curBeat++;
         }
